@@ -52,16 +52,111 @@
                         <img src="./img/icons/search.svg" alt="search">
                         <input type="search" name="search-product" id="" placeholder="Enter device name...">
                     </div>
-                    <div class="filter">
+                    <div class="filter inactive" id="filter">
                         <img src="./img/icons/filter.svg" alt="">
                     </div>
                     <div class="sort">
                         <img src="./img/icons/settings.svg" alt="">
                     </div>
                 </div>
-                <div class="container-cards" id="container-cards">
+                <div class="container-main" id="container-main">
+                    <div class="container-accordeon">
+                        <aside class="sidebar">
+                            <h1 class="sidebar-heading">
+                                Filter by
+                            </h1>
+
+                            <ul class="filter ul-reset">
+                                <li class="filter-item">
+                                    <section class="filter-item-inner">
+                                        <h1 class="filter-item-inner-heading minus">
+                                            Price
+                                        </h1>
+                                        <ul class="filter-attribute-list ul-reset">
+                                            <div class="filter-attribute-list-inner" id="filter-attribute-price">
+                                                <label for="price-attribute-min" class="filter-attribute-label ib-m">
+                                                    From
+                                                </label>
+
+                                                <input type="text" id="price-attribute-min"
+                                                    class="filter-attribute-text ib-m"><br>
+                                                <label for="price-attribute-max" class="filter-attribute-label ib-m">
+                                                    To
+                                                </label>
+                                                <input type="text" id="price-attribute-max"
+                                                    class="filter-attribute-text ib-m">
+
+                                            </div>
+                                        </ul>
+                                    </section>
+                                </li>
+
+                                <li class="filter-item">
+                                    <section class="filter-item-inner">
+                                        <h1 class="filter-item-inner-heading minus">
+                                            Colour
+                                        </h1>
+                                        <ul class="filter-attribute-list ul-reset">
+                                            <div class="filter-attribute-list-inner" id="filter-attribute-colour">
+
+                                            </div>
+                                        </ul>
+                                    </section>
+                                </li>
+
+                                <li class="filter-item">
+                                    <section class="filter-item-inner">
+                                        <h1 class="filter-item-inner-heading minus">
+                                            Storage
+                                        </h1>
+                                        <ul class="filter-attribute-list ul-reset">
+                                            <div class="filter-attribute-list-inner" id="filter-attribute-storage">
+
+                                            </div>
+                                        </ul>
+                                    </section>
+                                </li>
+
+                                <li class="filter-item">
+                                    <section class="filter-item-inner">
+                                        <h1 class="filter-item-inner-heading minus">
+                                            OS
+                                        </h1>
+                                        <ul class="filter-attribute-list ul-reset">
+                                            <div class="filter-attribute-list-inner" id="filter-attribute-os">
+
+                                            </div>
+                                        </ul>
+                                    </section>
+                                </li>
+
+                                <li class="filter-item">
+                                    <section class="filter-item-inner">
+                                        <h1 class="filter-item-inner-heading minus">
+                                            Display
+                                        </h1>
+                                        <ul class="filter-attribute-list ul-reset">
+                                            <div class="filter-attribute-list-inner" id="filter-attribute-display">
+
+                                            </div>
+                                        </ul>
+                                    </section>
+                                </li>
+
+
+                            </ul>
+                        </aside>
+                    </div>
+                    <div class="container-cards" id="container-cards">
+
+                    </div>
+
+                    <div class="modal" id="modal">
+
+                    </div>
 
                 </div>
+
             </main>
         </div>
 
