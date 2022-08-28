@@ -2,12 +2,12 @@ let numArticle = 0;
 let current = 0;
 let prev = -1;
 let slides = document.getElementsByClassName("slide");
-let itemsNum = items.length
 let cart = []
 let colorFilter = [];
 let storageFilter = [];
 let osFilter = [];
 let displayFilter = [];
+let currentFilter = [];
 
 setInterval(function () {
     current = current < slides.length - 1 ? current + 1 : 0;
@@ -23,46 +23,53 @@ setInterval(function () {
     $('#adds').attr('class', `add-to-cart slideshow ${id}`)
 }, 3000);
 
-
-
-for (let i = 0; i < itemsNum; i++) {
-    var div = document.createElement("div");
-    let enabled = items[i].orderInfo.inStock
-    if (enabled > 0) {
-        enabled = "fa-circle-check"
-        btnEnabled = ""
-    } else {
-        enabled = "fa-circle-xmark"
-        btnEnabled = " disabled"
+function build(itemsArr) {
+    while (document.getElementById("container-cards").firstChild) {
+        document.getElementById("container-cards").removeChild(document.getElementById("container-cards").firstChild)
     }
-    div.className = `card ${items[i].id}`;
-    div.innerHTML = `<div class="product-photo">
-    <img src="img/${items[i].imgUrl}" width="200" height="200" alt="product">
+    let itemsNum = itemsArr.length
+    for (let i = 0; i < itemsNum; i++) {
+        var div = document.createElement("div");
+        let enabled = itemsArr[i].orderInfo.inStock
+        if (enabled > 0) {
+            enabled = "fa-circle-check"
+            btnEnabled = ""
+        } else {
+            enabled = "fa-circle-xmark"
+            btnEnabled = " disabled"
+        }
+        div.className = `card ${itemsArr[i].id}`;
+        div.innerHTML = `<div class="product-photo">
+    <img src="img/${itemsArr[i].imgUrl}" width="200" height="200" alt="product">
 </div>
 <div class="product-title">
-${items[i].name}
+${itemsArr[i].name}
 </div>
 <div class="stock-status">
     <i class="fa-solid ${enabled}"></i>
-    <div class="stock-count"><span>${items[i].orderInfo.inStock}</span>left in stock</div>
+    <div class="stock-count"><span>${itemsArr[i].orderInfo.inStock}</span>left in stock</div>
 </div>
 <div class="product-price">
-    Price: <span>${items[i].price}</span>$
+    Price: <span>${itemsArr[i].price}</span>$
 </div>
 <button class='add-to-cart${btnEnabled}'${btnEnabled}>Add to cart</button>
 <div class="product-stats">
     <div class="stats-left">
         <i class="fa-solid fa-heart"></i>
         <div class="reviews">
-            <span>${items[i].orderInfo.reviews}%</span> Positive reviews <br> Above avarage
+            <span>${itemsArr[i].orderInfo.reviews}%</span> Positive reviews <br> Above avarage
         </div>
     </div>
     <div class="orders">
         <span>${getRandomInt(300, 1000)}</span><br>orders
     </div>
 </div>`;
-    document.getElementById("container-cards").appendChild(div)
+        document.getElementById("container-cards").appendChild(div)
+    }
+
 }
+
+build(items)
 
 items.forEach(e => {
     tempColor = e.color
@@ -231,35 +238,41 @@ document.getElementById("filter").onclick = function () {
     }
 
 }
-
+let containerCards = document.getElementById("container-cards")
 let cards = document.getElementsByClassName("card")
 
-for (let i = 0; i < cards.length; i++) {
-    cards[i].onclick = function () {
-        let cardID = cards[i].className.split(" ")[1];
-        let enabled = items[cardID - 1].orderInfo.inStock
-        if (enabled > 0) {
-            enabled = "fa-circle-check"
-            btnEnabled = ""
-        } else {
-            enabled = "fa-circle-xmark"
-            btnEnabled = " disabled"
-        }
-        var div = document.createElement("div");
-        div.className = "modal-content"
-        div.innerHTML = `
+containerCards.onclick = function (event) {
+    let target = event.target;
+    console.log(target);
+    while (target.parentNode.id != "container-cards") {
+        target = target.parentNode
+    }
+    let cardID = target.className.split(" ")[1] - 1;
+    console.log(cardID);
+    console.log(target + " finallly");
+    let enabled = items[cardID].orderInfo.inStock
+    if (enabled > 0) {
+        enabled = "fa-circle-check"
+        btnEnabled = ""
+    } else {
+        enabled = "fa-circle-xmark"
+        btnEnabled = " disabled"
+    }
+    var div = document.createElement("div");
+    div.className = "modal-content"
+    div.innerHTML = `
       
                             <span class="modal-close">&times;</span>
                             <div class="modal-photo">
-                                <img src="img/${items[cardID - 1].imgUrl}" alt="">
+                                <img src="img/${items[cardID].imgUrl}" alt="">
                             </div>
                             <div class="modal-description">
-                                <h1>${items[cardID - 1].name}</h1>
+                                <h1>${items[cardID].name}</h1>
                                 <div class="product-stats">
                                     <div class="stats-left">
                                         <i class="fa-solid fa-heart"></i>
                                         <div class="reviews">
-                                            <span>${items[cardID - 1].orderInfo.reviews}%</span> Positive reviews <br> Above avarage
+                                            <span>${items[cardID].orderInfo.reviews}%</span> Positive reviews <br> Above avarage
                                         </div>
                                     </div>
                                     <div class="orders">
@@ -267,34 +280,31 @@ for (let i = 0; i < cards.length; i++) {
                                     </div>
                                 </div>
                                 <div class="description">
-                                    <p>Color: <span>${items[cardID - 1].color}</span></p>
-                                    <p>Operating System: <span>${items[cardID - 1].os}</span></p>
-                                    <p>Chip: <span>${items[cardID - 1].chip.name}</span></p>
-                                    <p>Height: <span>${items[cardID - 1].size.height}</span></p>
-                                    <p>Width: <span>${items[cardID - 1].size.width}</span></p>
-                                    <p>Depth: <span>${items[cardID - 1].size.depth}</span></p>
-                                    <p>Weight: <span>${items[cardID - 1].size.width}</span></p>
+                                    <p>Color: <span>${items[cardID].color}</span></p>
+                                    <p>Operating System: <span>${items[cardID].os}</span></p>
+                                    <p>Chip: <span>${items[cardID].chip.name}</span></p>
+                                    <p>Height: <span>${items[cardID].size.height}</span></p>
+                                    <p>Width: <span>${items[cardID].size.width}</span></p>
+                                    <p>Depth: <span>${items[cardID].size.depth}</span></p>
+                                    <p>Weight: <span>${items[cardID].size.weight}</span></p>
                                 </div>
                             </div>
                             <div class="modal-price">
-                                <span>$ ${items[cardID - 1].price}</span>
+                                <span>$ ${items[cardID].price}</span>
                                 <div class="stock">
                                   <br>
-                                Stock: <b>${items[cardID - 1].orderInfo.inStock}</b>pcs.  
+                                Stock: <b>${items[cardID].orderInfo.inStock}</b>pcs.  
                                 </div>
                                 
-                                <button class='add-to-cart${btnEnabled} ${items[cardID - 1].id}'${btnEnabled}>Add to cart</button>
+                                <button class='add-to-cart${btnEnabled} ${items[cardID].id}'${btnEnabled}>Add to cart</button>
 
                             </div>
                        
         `;
-        document.getElementById("modal").style.display = "flex";
-        document.getElementById("modal").appendChild(div)
-
-    }
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modal").appendChild(div)
 
 }
-
 document.getElementById("modal").onclick = function (event) {
     let target = event.target;
     if (target.id == "modal" || target.className == "modal-close") {
@@ -303,7 +313,7 @@ document.getElementById("modal").onclick = function (event) {
         document.getElementById("modal").removeChild(document.getElementsByClassName("modal-content")[0])
     } else {
         if (target.className.split(" ")[0] == "add-to-cart" && target.className.split(" ")[1] != "disabled") {
-
+            console.log('12');
             numArticle++;
             setTimeout(function () {
                 $('.cart span').html(numArticle);
@@ -317,3 +327,67 @@ document.getElementById("modal").onclick = function (event) {
 }
 
 
+/* update current filters */
+
+function updateFilter () {
+    priceFilter=[document.getElementById("price-attribute-min").value,document.getElementById("price-attribute-max").value]
+    storageFilter = [...document.querySelectorAll('#filter-attribute-storage input:checked')].map(n => n.id.split("-")[2])
+    osFilter = [...document.querySelectorAll('#filter-attribute-os input:checked')].map(n => { if (n.id.split("-")[2] == "other") { return null } else { return n.id.split("-")[2]; } })
+    colorFilter = [...document.querySelectorAll('#filter-attribute-colour input:checked')].map(n => n.id.split("-")[2])
+    displayFilter = [...document.querySelectorAll('#filter-attribute-display input:checked')].map(n => convertDisplay(n.id))
+    build(items.filter((n => (
+        (priceFilter[1]==0||(priceFilter[1]!=0n.price>=priceFilter[0]&&n.price<=priceFilter[1]))&&
+        (!colorFilter.length || checkColour(n, colorFilter)) &&
+        (!storageFilter.length || (n.storage != null && storageFilter.includes(n.storage.toString()))) &&
+        (!osFilter.length || osFilter.includes(n.os)) &&
+        (!displayFilter.length || checkDisplay(n, displayFilter))
+    ))))
+}
+
+let filtersCB = document.getElementsByClassName("filter-attribute-checkbox ib-m")
+for (let i = 0; i < filtersCB.length; i++) {
+    filtersCB[i].onchange = updateFilter
+}
+document.getElementById("price-attribute-max").onblur=function () {
+    if (document.getElementById("price-attribute-max").value<document.getElementById("price-attribute-min").value) {
+        document.getElementById("price-attribute-min").value=document.getElementById("price-attribute-max").value;
+    }
+    updateFilter()
+}
+function convertDisplay(diap) {
+    temp = diap.split("-");
+    switch (true) {
+        case temp.length == 4:
+            return [temp[2], temp[3]]
+        case temp[2] == "other":
+            return null
+        default:
+            return [16, 1000]
+    }
+}
+
+
+function checkColour(item, filterArr) {
+    for (let i = 0; i < filterArr.length; i++) {
+        if (item.color.includes(filterArr[i])) {
+            return true
+        }
+    }
+}
+
+function checkDisplay(item, filterArr) {
+    for (let i = 0; i < filterArr.length; i++) {
+        if (filterArr[i] == null) {
+            if (item.display == null) {
+                return true
+            }
+            return false
+        }
+        if (filterArr[i].length == 2) {
+            if (item.display >= filterArr[i][0] && item.display <= filterArr[i][1]) {
+                return true
+            }
+        }
+
+    }
+}

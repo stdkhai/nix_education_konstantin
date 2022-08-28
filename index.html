@@ -14,7 +14,6 @@
 
 <body>
     <script src="js/items.js"></script>
-    <!--     <script src="js/main.js"></script> -->
     <div class="wrapper">
         <div class="container">
             <header>
@@ -78,13 +77,13 @@
                                                     From
                                                 </label>
 
-                                                <input type="text" id="price-attribute-min"
-                                                    class="filter-attribute-text ib-m"><br>
+                                                <input type="number" id="price-attribute-min"
+                                                    class="filter-attribute-text ib-m" value="0"><br>
                                                 <label for="price-attribute-max" class="filter-attribute-label ib-m">
                                                     To
                                                 </label>
-                                                <input type="text" id="price-attribute-max"
-                                                    class="filter-attribute-text ib-m">
+                                                <input type="number" id="price-attribute-max"
+                                                    class="filter-attribute-text ib-m" value="0">
 
                                             </div>
                                         </ul>
@@ -148,7 +147,7 @@
                         </aside>
                     </div>
                     <div class="container-cards" id="container-cards">
-
+                        
                     </div>
 
                     <div class="modal" id="modal">

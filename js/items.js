@@ -379,44 +379,7 @@ const items = [
         	reviews: 99, // процент положительных отзывов
         }
     },
-    {
-        id: 34 ,
-        category: 'ipad',
-        imgUrl: 'items/ipad-air.png',
-        name: 'IPad Air',
-        display: 10.9, // дюймы
-        color: [ 'Silver', 'Space Grey','Rose Gold','Green','Sky Blue'],
-        price: 549, // доллары
-        chip: {
-            name: 'A14 Bionic ',
-            cores: null,
-        },
-        ram: null, // Гб
-        storage: 64, // TB
-        touchId: true,
-        faceId: false,
-        wireless: ['Wi-Fi', 'Bluetooth 5.0'],
-        camera: {
-            front: '720p FaceTime HD camera',
-            back: 'Ultra Wide: 10MP',
-        },
-        audio: {
-            microphone: 'Dual microphones for calls, video recording, and audio recording',
-            speakers: 'Stereo speakers',
-        },
-        size: {
-            height: '24.7', // cm
-            width: '17.8', // cm
-            depth: '0.6', // cm
-            weight: '0.458', // Кг
-        },
-        os: 'macOS',
-        InTheBox: ['iPad Air', 'USB-C Charge Cable (1 meter)', '20W USB-C Power Adapter'],
-        orderInfo: {
-        	inStock: 97, // кол-во едениц товара в наличии
-        	reviews: 97, // процент положительных отзывов
-        }
-    },
+    
     {
         id: 11 ,
         category: 'ipad',
@@ -1268,6 +1231,44 @@ const items = [
         orderInfo: {
         	inStock: 0, // кол-во едениц товара в наличии
         	reviews: 5, // процент положительных отзывов
+        }
+    },
+    {
+        id: 34 ,
+        category: 'ipad',
+        imgUrl: 'items/ipad-air.png',
+        name: 'IPad Air',
+        display: 10.9, // дюймы
+        color: [ 'Silver', 'Space Grey','Rose Gold','Green','Sky Blue'],
+        price: 549, // доллары
+        chip: {
+            name: 'A14 Bionic ',
+            cores: null,
+        },
+        ram: null, // Гб
+        storage: 64, // TB
+        touchId: true,
+        faceId: false,
+        wireless: ['Wi-Fi', 'Bluetooth 5.0'],
+        camera: {
+            front: '720p FaceTime HD camera',
+            back: 'Ultra Wide: 10MP',
+        },
+        audio: {
+            microphone: 'Dual microphones for calls, video recording, and audio recording',
+            speakers: 'Stereo speakers',
+        },
+        size: {
+            height: '24.7', // cm
+            width: '17.8', // cm
+            depth: '0.6', // cm
+            weight: '0.458', // Кг
+        },
+        os: 'macOS',
+        InTheBox: ['iPad Air', 'USB-C Charge Cable (1 meter)', '20W USB-C Power Adapter'],
+        orderInfo: {
+        	inStock: 97, // кол-во едениц товара в наличии
+        	reviews: 97, // процент положительных отзывов
         }
     },
 ];
