@@ -1,4 +1,3 @@
-let numArticle = 0;
 let current = 0;
 let prev = -1;
 let slides = document.getElementsByClassName("slide");
@@ -8,6 +7,9 @@ let storageFilter = [];
 let osFilter = [];
 let displayFilter = [];
 let currentFilter = [];
+
+
+buildCart(localStorage)
 
 setInterval(function () {
     current = current < slides.length - 1 ? current + 1 : 0;
@@ -177,29 +179,34 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
 }
-
-var a = document.getElementsByClassName('add-to-cart');
+document.getElementById("adds").onclick=function (event) {
+    let target = event.target;
+    addToCart(target.className.split(" ")[2])
+}
+/* var a = document.getElementsByClassName('add-to-cart');
 for (let i = 0; i < a.length; i++) {
-    a[i].onclick = function () {
-        numArticle++;
-        setTimeout(function () {
-            $('.cart span').html(numArticle);
-        }, 100);
+    a[i].onclick = function (event) {
+        let target=event.target;
         id = a[i].parentElement.className.split(" ")[a[i].parentElement.className.split(" ").length - 1];
-
         if (id == "text-container") {
             id = a[i].attributes["class"].nodeValue.split(" ")[2];
         }
         addToCart(id);
     };
-}
+} */
 
 function addToCart(id) {
-    items.forEach(e => {
-        if (e.id == id) {
-            cart.push(e);
-        }
-    });
+    val = localStorage.getItem(id)
+    if (val==4) {
+        alert("Неможливо додати більше 4 одиниць товару!");
+        return;
+    }
+    if (val != null) {
+        localStorage.setItem(id, Number(val) + 1)
+    } else {
+        localStorage.setItem(id, 1)
+    }
+    buildCart(localStorage)
 }
 
 
@@ -243,13 +250,17 @@ let cards = document.getElementsByClassName("card")
 
 containerCards.onclick = function (event) {
     let target = event.target;
-    console.log(target);
+    if (target.className.split(" ")[0] == "add-to-cart" && target.className.split(" ")[1] != "disabled") {
+        do {
+            target = target.parentNode
+        } while (!target.className.startsWith("card"));
+        addToCart(target.className.split(" ")[1])
+        return
+    }
     while (target.parentNode.id != "container-cards") {
         target = target.parentNode
     }
     let cardID = target.className.split(" ")[1] - 1;
-    console.log(cardID);
-    console.log(target + " finallly");
     let enabled = items[cardID].orderInfo.inStock
     if (enabled > 0) {
         enabled = "fa-circle-check"
@@ -313,12 +324,6 @@ document.getElementById("modal").onclick = function (event) {
         document.getElementById("modal").removeChild(document.getElementsByClassName("modal-content")[0])
     } else {
         if (target.className.split(" ")[0] == "add-to-cart" && target.className.split(" ")[1] != "disabled") {
-            console.log('12');
-            numArticle++;
-            setTimeout(function () {
-                $('.cart span').html(numArticle);
-            }, 100);
-
             addToCart(target.className.split(" ")[1]);
         }
         return
@@ -329,14 +334,14 @@ document.getElementById("modal").onclick = function (event) {
 
 /* update current filters */
 
-function updateFilter () {
-    priceFilter=[document.getElementById("price-attribute-min").value,document.getElementById("price-attribute-max").value]
+function updateFilter() {
+    priceFilter = [document.getElementById("price-attribute-min").value, document.getElementById("price-attribute-max").value]
     storageFilter = [...document.querySelectorAll('#filter-attribute-storage input:checked')].map(n => n.id.split("-")[2])
     osFilter = [...document.querySelectorAll('#filter-attribute-os input:checked')].map(n => { if (n.id.split("-")[2] == "other") { return null } else { return n.id.split("-")[2]; } })
     colorFilter = [...document.querySelectorAll('#filter-attribute-colour input:checked')].map(n => n.id.split("-")[2])
     displayFilter = [...document.querySelectorAll('#filter-attribute-display input:checked')].map(n => convertDisplay(n.id))
     build(items.filter((n => (
-        (priceFilter[1]==0||(priceFilter[1]!=0n.price>=priceFilter[0]&&n.price<=priceFilter[1]))&&
+        (priceFilter[1] == 0 || (n.price >= priceFilter[0] && n.price <= priceFilter[1])) &&
         (!colorFilter.length || checkColour(n, colorFilter)) &&
         (!storageFilter.length || (n.storage != null && storageFilter.includes(n.storage.toString()))) &&
         (!osFilter.length || osFilter.includes(n.os)) &&
@@ -348,12 +353,13 @@ let filtersCB = document.getElementsByClassName("filter-attribute-checkbox ib-m"
 for (let i = 0; i < filtersCB.length; i++) {
     filtersCB[i].onchange = updateFilter
 }
-document.getElementById("price-attribute-max").onblur=function () {
-    if (document.getElementById("price-attribute-max").value<document.getElementById("price-attribute-min").value) {
-        document.getElementById("price-attribute-min").value=document.getElementById("price-attribute-max").value;
+document.getElementById("price-attribute-max").onblur = function () {
+    if (document.getElementById("price-attribute-max").value < document.getElementById("price-attribute-min").value) {
+        document.getElementById("price-attribute-min").value = document.getElementById("price-attribute-max").value;
     }
     updateFilter()
 }
+
 function convertDisplay(diap) {
     temp = diap.split("-");
     switch (true) {
@@ -390,4 +396,141 @@ function checkDisplay(item, filterArr) {
         }
 
     }
+}
+
+function GetCartCount() {
+    let res = 0
+    Object.values(localStorage).forEach(val => {
+        res += Number(val)
+    });
+    return res
+}
+
+function buildCart(storage) {
+    while (document.getElementById("container-rows").firstChild) {
+        document.getElementById("container-rows").removeChild(document.getElementById("container-rows").firstChild)
+    }
+    Object.keys(storage).forEach(key => {
+        el = GetItemByID(Number(key))
+        let buttonMinus, buttonPlus = ""
+        if (storage[key] == 1) {
+            buttonMinus = " disabled"
+        }
+        if (storage[key] >= 4) {
+            buttonPlus = " disabled"
+        }
+        var div = document.createElement("div");
+        div.className = `row-item`
+        div.id = el.id
+        div.innerHTML = ` <div class="item-preview">
+        <img src="./img/${el.imgUrl}" alt="">
+    </div>
+    <div class="item-info">
+    ${el.name} <br>
+        <span>$${el.price}</span>
+    </div>
+    <div class="counter">
+        <button class="counter-del"${buttonMinus}>
+            &lt;
+        </button>
+        <span class="count">
+            ${storage[key]}
+        </span>
+        <button class="counter-add"${buttonPlus}>
+            &gt;
+        </button>
+    </div>
+    <div class="remove-item">
+        <i class="fa fa-times-circle" aria-hidden="true"></i>
+    </div>
+</div>`
+        document.getElementById("container-rows").appendChild(div)
+    });
+
+    document.getElementById("total-amount").innerHTML = `Total amount: <b>${GetCartCount()} ptc.</b>`
+    document.getElementById("total-price").innerHTML = `Total price: <b>${GetPrice()}$</b> `
+    $('.cart span.cart').html(GetCartCount());
+
+
+}
+
+function GetItemByID(id) {
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].id == id) {
+            return items[i]
+        }
+    }
+
+}
+
+function GetPrice() {
+    let res = 0
+    Object.keys(localStorage).forEach(key => {
+        e = GetItemByID(key)
+        res += localStorage[key] * e.price
+    })
+    return res
+}
+
+document.getElementById("container-rows").onclick = function (event) {
+    let target = event.target;
+    if (target.className == "fa fa-times-circle") {
+        do {
+            target = target.parentNode
+        } while (target.className != "row-item");
+        localStorage.removeItem(target.id);
+        buildCart(localStorage)
+    }
+    if (target.className == "counter-del") {
+        do {
+            target = target.parentNode
+        } while (target.className != "row-item");
+        changeCount(target.id, "-")
+    }
+    if (target.className == "counter-add") {
+        do {
+            target = target.parentNode
+        } while (target.className != "row-item");
+        changeCount(target.id, "+")
+    }
+}
+
+document.getElementById("cart").onclick = function (event) {
+    let target = event.target
+    if (target.id == "modal-cart") {
+        return
+    }
+    while (target.id != "modal-cart") {
+        target = target.parentNode
+        console.log(target);
+        if (target!=null){
+            break
+        }
+        if (target.id == "modal-cart") {
+            return
+        }
+    }
+    if (document.getElementById("cart").title == "closed") {
+        document.getElementById("modal-cart").style.display = "flex"
+        document.getElementById("cart").title = "opened"
+        return
+    }
+    if (document.getElementById("cart").title == "opened") {
+        document.getElementById("modal-cart").style.display = "none"
+        document.getElementById("cart").title = "closed"
+        return
+    }
+}
+
+function changeCount(id, change) {
+    switch (change) {
+        case "+":
+            localStorage.setItem(id, Number(localStorage[id]) + 1)
+            break;
+        case "-":
+            localStorage.setItem(id, Number(localStorage[id]) - 1)
+            break;
+    }
+    buildCart(localStorage)
+
 }

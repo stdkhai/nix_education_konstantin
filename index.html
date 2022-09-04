@@ -19,10 +19,31 @@
             <header>
                 <div class="signin">
                     <div class="logo"><img src="img/icons/logo.png" alt="logo"></div>
-                    <div class="cart">
-                        <img src="./img/icons/cart.svg" alt="">
-                        <span>0</span>
+                    <div class="">
+                        <div class="cart" id="cart" title="closed">
+                            <img src="./img/icons/cart.svg" alt="">
+                            <span class="cart">0</span>
+
+                        </div>
+                        <section class="modal-cart" id="modal-cart">
+                            <h2>Shopping Cart</h2>
+                            <div class="container-rows" id="container-rows">
+
+                            </div>
+
+                            <div class="total">
+                                <div class="total-amount" id="total-amount">
+
+                                </div>
+                                <div class="total-price" id="total-price">
+                                    Total price: <b>1699$</b>
+                                </div>
+                            </div>
+                            <button class="buy">Buy</button>
+                        </section>
                     </div>
+
+
                 </div>
                 <div class="banner">
                     <div class='slideshow-container'>
@@ -73,17 +94,24 @@
                                         </h1>
                                         <ul class="filter-attribute-list ul-reset">
                                             <div class="filter-attribute-list-inner" id="filter-attribute-price">
-                                                <label for="price-attribute-min" class="filter-attribute-label ib-m">
-                                                    From
-                                                </label>
+                                                <div class="span">
+                                                    <label for="price-attribute-min"
+                                                        class="filter-attribute-label ib-m">
+                                                        From
+                                                    </label>
 
-                                                <input type="number" id="price-attribute-min"
-                                                    class="filter-attribute-text ib-m" value="0"><br>
-                                                <label for="price-attribute-max" class="filter-attribute-label ib-m">
-                                                    To
-                                                </label>
-                                                <input type="number" id="price-attribute-max"
-                                                    class="filter-attribute-text ib-m" value="0">
+                                                    <input type="number" id="price-attribute-min"
+                                                        class="filter-attribute-text ib-m" value="0">
+                                                </div>
+                                                <div class="span">
+                                                    <label for="price-attribute-max"
+                                                        class="filter-attribute-label ib-m">
+                                                        To
+                                                    </label>
+                                                    <input type="number" id="price-attribute-max"
+                                                        class="filter-attribute-text ib-m" value="0">
+                                                </div>
+
 
                                             </div>
                                         </ul>
@@ -147,7 +175,7 @@
                         </aside>
                     </div>
                     <div class="container-cards" id="container-cards">
-                        
+
                     </div>
 
                     <div class="modal" id="modal">
