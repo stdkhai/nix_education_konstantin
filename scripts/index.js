@@ -1,7 +1,7 @@
 let eventslist = [
     { start: 0, duration: 15, title: "Exercise" },
     { start: 25, duration: 30, title: "Travel to work" },
-    { start: 30, duration: 30, title: "Plan day" },
+    { start: 30, duration: 30 ,title: "Plan day" },
     { start: 60, duration: 15, title: "Review yesterday's commits" },
     { start: 100, duration: 15, title: "Code review" },
     { start: 180, duration: 90, title: "Have lunch with John" },
@@ -50,55 +50,9 @@ function GetFormattedID(start) {
     return `${String(Math.floor(start / 60)).padStart(2, "0")}:${String(start % 60).padStart(2, "0")}`
 }
 
-function GetEventWidth(id) {
-    let count = 1
-    for (let i = id + 1; i < eventslist.length; i++) {
-        if (eventslist[id].start + eventslist[id].duration >= eventslist[i].start) {
-            count++
-            count += Recurse(i)
-        }
-    }
-    return Math.floor(100 / count) + "%"
-}
-
-function GetEventMargin(id) {
-    let count = 1
-    for (let i = 0; i < id; i++) {
-        if (eventslist[i].start + eventslist[i].duration > eventslist[id].start) {
-            count++
-            count += Recurse(i)
-        }
-    }
-    return 100 - Math.floor(100 / count) + "%"
-}
-
-function Recurse(id) {
-    let i = id
-    res = 0
-    while (eventslist[i - 1].start + eventslist[i - 1].duration >= eventslist[i].start || i == 0) {
-        res++
-        i--
-    }
-    return res
-}
-
-/* function RecurseW(id) {
-    let i = id
-    res = 0
-    while (eventslist[i - 1].start + eventslist[i - 1].duration >= eventslist[i].start || i == 0) {
-        res++
-        i--
-    }
-    return res
-
-
-    if ($(".events")[i].children(".event").length!=0) {
-        }
-} */
-
 function AddInvisible(start, duration, id) {
     if (id < Math.floor((start + duration) / 60)) {
-        for (let i = id + 1; i <= Math.floor((start + duration) / 60); i++) {
+        for (let i = id + 1; i < Math.floor((start + duration) / 60); i++) {
             div = document.createElement("div")
             div.className = "event invisible"
             $(`#${String(i).padStart(2, "0")}.events`).append(div)
@@ -113,12 +67,12 @@ function FormatEvents() {
         if (arr[i].childElementCount > 0) {
             for (let j = 0; j < arr[i].childElementCount; j++) {
                 console.log(j, "j");
-                arr[i].children[j].style.width = /* 100/arr[i].childElementCount+"%" */GetEventWidth()
+                arr[i].children[j].style.width = 100/arr[i].childElementCount+"%"
                 if (arr[i].getElementsByClassName("event invisible").length == 0) {
                     console.log("nul");
                     arr[i].children[j].style.marginLeft = 100 - 100 / (j + 1) + "%"
                 }
-                arr[i].children[j].style.marginLeft = 100 - 100 / (arr[i].getElementsByClassName("event invisible").length + 1 + j) + "%"
+                arr[i].children[j].style.marginLeft = Math.floor(100/arr[i].childElementCount)*j  + "%"
             }
         }
 
@@ -142,13 +96,12 @@ document.getElementById('event-editor').addEventListener('submit', getFormValue)
 document.getElementById('event-editor').addEventListener('reset', Hide)
 function getFormValue(event) {
     event.preventDefault();
-    
-    const start = document.getElementById('event-editor').querySelector('[name="event-start"]'), 
-    end = document.getElementById('event-editor').querySelector('[name="event-end"]'),
-    title = document.getElementById('event-editor').querySelector('[name="event-caption"]'), 
-    colour = document.getElementById('event-editor').querySelector('[name="event-colour"]');
-    if (title.value=="") {
-        document.getElementById("event-caption").style.borderColor="red"
+    const start = document.getElementById('event-editor').querySelector('[name="event-start"]'),
+        end = document.getElementById('event-editor').querySelector('[name="event-end"]'),
+        title = document.getElementById('event-editor').querySelector('[name="event-caption"]'),
+        colour = document.getElementById('event-editor').querySelector('[name="event-colour"]');
+    if (title.value == "") {
+        document.getElementById("event-caption").style.borderColor = "red"
     }
     const data = {
         title: title.value,
@@ -156,17 +109,28 @@ function getFormValue(event) {
         start: start.value,
         end: end.value
     };
-    if (data.end<=data.start) {
-        document.getElementById("event-end").style.borderColor="red"
-    } else{
-        document.getElementById("event-end").style.borderColor="black" 
+    if (data.end <= data.start) {
+        document.getElementById("event-end").style.borderColor = "red"
+    } else {
+        document.getElementById("event-end").style.borderColor = "black"
+    }
+    if (data.start == "") {
+        document.getElementById("event-start").style.borderColor = "red"
+    } else {
+        document.getElementById("event-start").style.borderColor = "black"
+    }
+
+    formData = {
+        start: data.start.split(":")[0] * 60 + data.start.split(":")[1],
+        duration: data.end.split(":")[0] * 60 + data.end.split(":")[1] - start,
+        title: data.title
     }
 
 }
 
 function Hide(event) {
     event.preventDefault();
-    document.getElementById("modal").style.display="none";
+    document.getElementById("modal").style.display = "none";
 
 }
 
@@ -174,4 +138,4 @@ function Hide(event) {
 const hex2rgba = (hex, alpha = 1) => {
     const [r, g, b] = hex.match(/\w\w/g).map(x => parseInt(x, 16));
     return `rgba(${r},${g},${b},${alpha})`;
-  };
+};
