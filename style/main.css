@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Cardo&family=Inter&family=Montserrat&family=Roboto&display=swap');
+
+:root {
+    --red: #F05454;
+    --blue: #0E49B5;
+    --grey: #DDDDDD;
+    --white: #FFFFFF;
+    --bluegrey: #DAE2EA;
+    --darkgrey: #767272;
+    --darkblue: #3B3E66;
+    --green: #1BC943;
+    --black: #000000;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--grey);
+    font-weight: normal;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+.wrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: top;
+}
+
+.container {
+    max-width: 1300px;
+    padding: 50px 15px;
+    margin: 0 auto;
+    position: relative;
+}
+
+p {
+    margin: 0 0 10px;
+}
+
+a {
+    color: var(--blue);
+    text-decoration: none;
+    font-family: 'Roboto', serif;
+}
+
+a:hover {
+    opacity: .7;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Cardo', serif;
+    color: var(--blue);
+    margin: 0 0 20px;
+}
+
+.table {
+    overflow: hidden;
+}
+
+.row {
+    display: flex;
+    border: var(--darkgrey) 1px solid;
+    margin: -1px 0 0 -1px;
+    height: 60px;
+    position: relative;
+    overflow-x: clip;
+    /* overflow-y: ; */
+}
+
+.events {
+    display: flex;
+    width: 100%;
+    position: relative;
+
+
+}
+
+.event {
+    background-color: var(--bluegrey);
+    border-left: 3px solid var(--blue);
+    color: var(--black);
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+}
+
+table {
+    position: absolute;
+}
+
+.modal {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-event {
+    background-color: var(--white);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid var(--darkgrey);
+    width: 80%;
+}
+
+.modal-event form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    color: var(--black);
+}
+
+.span {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
