@@ -5,7 +5,7 @@
     --blue: #0E49B5;
     --grey: #DDDDDD;
     --white: #FFFFFF;
-    --bluegrey: #DAE2EA;
+    --bluegrey: #dae2ea;
     --darkgrey: #767272;
     --darkblue: #3B3E66;
     --green: #1BC943;
@@ -98,13 +98,16 @@ h6 {
 }
 
 .event {
-    background-color: var(--bluegrey);
-    border-left: 3px solid var(--blue);
+   /*  background-color: var(--bluegrey); */
+    border-left: 3px solid;
     color: var(--black);
     width: 100%;
     position: absolute;
     z-index: 1;
     max-width: 200px;
+    white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 
 table {

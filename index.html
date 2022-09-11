@@ -14,7 +14,7 @@
     <div class="container" id="container">
         <!--  section.table.>(.row>.time#$$@0{$$@0:00}+.events#$$@0)*24
     <div class="event" id="00:15">Exercise</div> -->
-        <section class="table">
+        <section class="table" id="table">
             <div class="row">
                 <div class="time" id="00">00:00</div>
                 <div class="events" id="00">
@@ -116,30 +116,6 @@
             </div>
         </section>
         <section class="modal"id="modal">
-            <div class="modal-event">
-            <form id="event-editor">
-                <div class="span">
-                    Назва події
-                <input type="text" name="event-caption" id="event-caption">
-                </div>
-                <div class="span">
-                    Виберіть колір<input type="color" name="event-colour" id="event-colour" value="#006edc">
-                </div>
-                <div class="span">
-                    Виберіть час початку події 
-                <input type="time" name="event-start" id="event-start">
-                </div>
-                <div class="span">
-                    Виберіть час кінця події
-                <input type="time"  name="event-end" id="event-end">
-                </div>
-                <div class="span-button">
-                    <button type="submit">Save</button>
-                <button type="reset">Cancel</button>
-                </div>
-                
-            </form>
-        </div>
         </section>
         
         <script src="./scripts/index.js"></script>
