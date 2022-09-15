@@ -43,12 +43,7 @@ img {
     vertical-align: top;
 }
 
-.container {
-    max-width: 1300px;
-    padding: 50px 15px;
-    margin: 0 auto;
-    position: relative;
-}
+
 
 p {
     margin: 0 0 10px;
@@ -76,7 +71,7 @@ h6 {
 }
 
 .table {
-    overflow: hidden;
+    overflow-x: scroll;
 }
 
 .row {
@@ -85,8 +80,7 @@ h6 {
     margin: -1px 0 0 -1px;
     height: 60px;
     position: relative;
-    overflow-x: clip;
-    /* overflow-y: ; */
+    width: 100%;
 }
 
 .events {
@@ -98,7 +92,6 @@ h6 {
 }
 
 .event {
-   /*  background-color: var(--bluegrey); */
     border-left: 3px solid;
     color: var(--black);
     width: 100%;
@@ -106,8 +99,8 @@ h6 {
     z-index: 1;
     max-width: 200px;
     white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 table {
@@ -147,6 +140,6 @@ table {
     margin: 10px 0;
 }
 
-.span input{
+.span input {
     border-left: var(--black);
 }

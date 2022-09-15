@@ -1,5 +1,5 @@
 let eventslist = [
-    /*  { start: 0, duration: 15, title: "Exercise", colour: "0,235,24" },
+   /*   { start: 0, duration: 15, title: "Exercise", colour: "0,235,24" },
     { start: 25, duration: 300, title: "Travel to work", colour: "218,226,234" },
     { start: 30, duration: 60, title: "Plan day", colour: "218,226,234" },
     { start: 60, duration: 15, title: "Review yesterday's commits", colour: "218,226,234" },
@@ -27,6 +27,7 @@ function UpdateLocalStorage() {
     localStorage.clear()
     eventslist.sort((a, b) => (a.start > b.start) ? 1 : -1)
     for (let i = 0; i < eventslist.length; i++) {
+        eventslist[i].id=i
         localStorage.setItem(i, JSON.stringify(eventslist[i]))
 
     }
@@ -49,9 +50,10 @@ function RebuildCalendar() {
     eventslist.sort((a, b) => (a.duration < b.duration) ? 1 : -1)
     for (let i = 0; i < eventslist.length; i++) {
         div = document.createElement("div")
-        div.className = "event"
+        div.className = `event ${GetFormattedID(eventslist[i].start)}`
+        div.title=eventslist[i].title
         let id = String(Math.floor(eventslist[i].start / 60)).padStart(2, "0")
-        div.id = GetFormattedID(eventslist[i].start)
+        div.id = /* GetFormattedID(eventslist[i].start) */eventslist[i].id
         if (eventslist[i].duration < 10) {
             div.style.height = "10px"
             div.style.fontSize = "10px"
@@ -83,7 +85,7 @@ function AddInvisible() {
             for (let i = Math.floor(eventslist[j].start / 60) + 1; i <= Math.floor((eventslist[j].start + eventslist[j].duration) / 60); i++) {
                 div = document.createElement("div")
                 div.className = "event invisible"
-                insertAtIndex(FindIndexOfChild(GetFormattedID(eventslist[j].start)), i, div);
+                insertAtIndex(FindIndexOfChild(/* GetFormattedID(eventslist[j].start) */eventslist[j].id), i, div);
             }
         }
     }
@@ -94,7 +96,7 @@ function FindIndexOfChild(time) {
     arr = document.getElementsByClassName("events")
     for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr[i].childElementCount; j++) {
-            if (arr[i].children[j].id === time) {
+            if (arr[i].children[j].id == time) {
                 return j
             }
         }
@@ -102,7 +104,7 @@ function FindIndexOfChild(time) {
 }
 
 function insertAtIndex(i, j, d) {
-    if (i === 0) {
+    if (i == 0) {
         $(`#${String(j).padStart(2, "0")}.events`).prepend(d);
         return;
     }
@@ -119,12 +121,12 @@ function FormatEvents() {
     for (let i = 0; i < arr.length; i++) {
         if (arr[i].childElementCount > 0) {
             for (let j = 0; j < arr[i].childElementCount; j++) {
-                if (arr[i].childElementCount * 200 <= document.body.clientWidth) {
+                if (arr[i].childElementCount * 200 <= arr[i].offsetWidth) {
                     arr[i].children[j].style.width = "200px"
                     arr[i].children[j].style.marginLeft = 200 * j + "px"
                 } else {
-                    arr[i].children[j].style.width = document.body.clientWidth / arr[i].childElementCount + "px"
-                    arr[i].children[j].style.marginLeft = document.body.clientWidth / arr[i].childElementCount * j + "px"
+                    arr[i].children[j].style.width = arr[i].offsetWidth / arr[i].childElementCount + "px"
+                    arr[i].children[j].style.marginLeft = arr[i].offsetWidth / arr[i].childElementCount * j + "px"
                 }
 
             }
@@ -135,7 +137,7 @@ function FormatEvents() {
 
 document.onclick = function (event) {
     let target = event.target;
-    switch (target.className) {
+    switch (target.className.split(" ")[0]) {
         case "event":
             DialogToEditEvent(target.id)
             break;
@@ -232,7 +234,6 @@ function AddEvent(e) {
 function DelEvent(time) {
     e = GetEventByID(time)
     const index = eventslist.indexOf(e);
-    alert(index)
     if (index > -1) { 
         eventslist.splice(index, 1); 
     }
@@ -245,7 +246,6 @@ function DelEvent(time) {
 function UpdateEvent(time) {
     e = GetEventByID(time)
     const index = eventslist.indexOf(e);
-    alert(index)
     if (index > -1) { 
         const start = document.getElementById('event-editor').querySelector('[name="event-start"]'),
             end = document.getElementById('event-editor').querySelector('[name="event-end"]'),
@@ -359,8 +359,8 @@ function RGBToHex(r, g, b) {
     return "#" + r + g + b;
 }
 
-function GetEventByID(time) {
-    v = time.split(":");
-    res = Number(v[0]) * 60 + Number(v[1]);
-    return eventslist.find(o => o.start == res);
+function GetEventByID(id) {
+    /* v = time.split(":");
+    res = Number(v[0]) * 60 + Number(v[1]); */
+    return eventslist.find(o => o.id == id);
 }
