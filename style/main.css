@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cardo&family=Inter&family=Montserrat&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cardo&family=Inter&family=Montserrat&family=Open+Sans&family=Roboto&display=swap');
 
 :root {
     --red: #F05454;
@@ -70,10 +70,6 @@ h6 {
     margin: 0 0 20px;
 }
 
-.table {
-    overflow-x: scroll;
-}
-
 .row {
     display: flex;
     border: var(--darkgrey) 1px solid;
@@ -81,6 +77,9 @@ h6 {
     height: 60px;
     position: relative;
     width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 200;
 }
 
 .events {
@@ -101,6 +100,8 @@ h6 {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
 }
 
 table {
@@ -142,4 +143,40 @@ table {
 
 .span input {
     border-left: var(--black);
+}
+
+.notification-cont{
+    position: fixed;
+    z-index: 1;
+    right: 10px;
+    bottom: 20px;
+    
+}
+
+.notification {
+    background-color: var(--bluegrey);
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    position: relative;
+}
+
+.notification .info{
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: nowrap;
+    color: var(--black);
+    align-items: center;
+}
+
+.fa-solid.fa-xmark{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: var(--black);
+}
+
+.fa-solid.fa-business-time{
+    color: var(--black);
+    margin: 10px;
 }

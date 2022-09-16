@@ -1,14 +1,8 @@
 let eventslist = [
-   /*   { start: 0, duration: 15, title: "Exercise", colour: "0,235,24" },
-    { start: 25, duration: 300, title: "Travel to work", colour: "218,226,234" },
-    { start: 30, duration: 60, title: "Plan day", colour: "218,226,234" },
-    { start: 60, duration: 15, title: "Review yesterday's commits", colour: "218,226,234" },
-    { start: 100, duration: 15, title: "Code review", colour: "218,226,234" },
-    { start: 180, duration: 90, title: "Have lunch with John", colour: "218,226,234" },
-    { start: 360, duration: 30, title: "Skype call", colour: "218,226,234" },
-    { start: 370, duration: 45, title: "Follow up with designer", colour: "218,226,234" },
-    { start: 405, duration: 30, title: "Push up branch", colour: "218,226,234" },  */
+   
 ]
+
+let nowEvents = [];
 let currSize = document.documentElement.clientWidth;
 $(window).resize(function () {
     if (document.documentElement.clientWidth != currSize) {
@@ -21,16 +15,29 @@ function GetEventList() {
     eventslist = []
     Object.keys(localStorage).forEach((key) => {
         eventslist.push(JSON.parse(localStorage[key]))
+        eventslist[eventslist.length - 1].mute = false
     });
 }
 function UpdateLocalStorage() {
     localStorage.clear()
     eventslist.sort((a, b) => (a.start > b.start) ? 1 : -1)
     for (let i = 0; i < eventslist.length; i++) {
-        eventslist[i].id=i
+        eventslist[i].id = i
         localStorage.setItem(i, JSON.stringify(eventslist[i]))
 
     }
+}
+
+function Notificate() {
+    for (let i = 0; i < eventslist.length; i++) {
+        const now = new Date();
+        if (now.getHours() * 60 + now.getMinutes() > eventslist[i].start && now.getHours() * 60 + now.getMinutes() < eventslist[i].start + eventslist[i].duration) {
+            eventslist[i].active = true
+        } else {
+            eventslist[i].active = false
+        }
+    }
+    BuildNotifications(eventslist)
 }
 
 
@@ -38,6 +45,25 @@ GetEventList()
 UpdateLocalStorage()
 RebuildCalendar()
 
+setInterval(Notificate, 10);
+
+function BuildNotifications(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].active && !arr[i].mute) {
+            div = document.createElement("div")
+            div.className = "notification"
+            div.innerHTML = `<i class="fa-solid fa-xmark"></i>
+                                <div class="info">
+                                    <i class="fa-solid fa-business-time"></i>
+                                    <div class="title">${arr[i].title} already started!</div>
+                                </div>`
+            document.getElementById("ntf").appendChild(div)
+            arr[i].mute = true
+        }
+
+    }
+
+}
 
 function RebuildCalendar() {
     toClear = document.getElementsByClassName("events");
@@ -51,9 +77,9 @@ function RebuildCalendar() {
     for (let i = 0; i < eventslist.length; i++) {
         div = document.createElement("div")
         div.className = `event ${GetFormattedID(eventslist[i].start)}`
-        div.title=eventslist[i].title
+        div.title = eventslist[i].title
         let id = String(Math.floor(eventslist[i].start / 60)).padStart(2, "0")
-        div.id = /* GetFormattedID(eventslist[i].start) */eventslist[i].id
+        div.id =eventslist[i].id
         if (eventslist[i].duration < 10) {
             div.style.height = "10px"
             div.style.fontSize = "10px"
@@ -71,7 +97,7 @@ function RebuildCalendar() {
     }
     AddInvisible()
     FormatEvents()
-    
+
 }
 
 function GetFormattedID(start) {
@@ -80,7 +106,7 @@ function GetFormattedID(start) {
 
 function AddInvisible() {
     eventslist.sort((a, b) => (a.start > b.start) ? 1 : -1)
-    for (let j = 0; j < eventslist.length /* - 1 */; j++) {
+    for (let j = 0; j < eventslist.length; j++) {
         if (Math.floor(eventslist[j].start / 60) < Math.floor((eventslist[j].start + eventslist[j].duration) / 60)) {
             for (let i = Math.floor(eventslist[j].start / 60) + 1; i <= Math.floor((eventslist[j].start + eventslist[j].duration) / 60); i++) {
                 div = document.createElement("div")
@@ -109,7 +135,7 @@ function insertAtIndex(i, j, d) {
         return;
     }
 
-    if ($(`#${String(j).padStart(2, "0")}.events`).children().length /* - 1 */ < i) {
+    if ($(`#${String(j).padStart(2, "0")}.events`).children().length < i) {
         $(`#${String(j).padStart(2, "0")}.events`).append(d);
         return
     }
@@ -143,6 +169,14 @@ document.onclick = function (event) {
             break;
         case "events":
             DialogToAddEvent(target.id)
+            break;
+        case "fa-solid":
+            if (target.className.split(" ")[1]=="fa-xmark") {
+                CloseNotification(target)
+            }
+            break;
+
+
     }
     switch (target.id) {
         case "sumbit":
@@ -158,8 +192,7 @@ document.onclick = function (event) {
             break;
         case "update":
             event.preventDefault();
-            UpdateEvent(target.value)
-            Hide(event)
+            UpdateEvent(target.value, event)
             break;
     }
 }
@@ -234,8 +267,8 @@ function AddEvent(e) {
 function DelEvent(time) {
     e = GetEventByID(time)
     const index = eventslist.indexOf(e);
-    if (index > -1) { 
-        eventslist.splice(index, 1); 
+    if (index > -1) {
+        eventslist.splice(index, 1);
     }
     UpdateLocalStorage()
     GetEventList()
@@ -243,10 +276,10 @@ function DelEvent(time) {
     window.location.reload();
 }
 
-function UpdateEvent(time) {
+function UpdateEvent(time, event) {
     e = GetEventByID(time)
     const index = eventslist.indexOf(e);
-    if (index > -1) { 
+    if (index > -1) {
         const start = document.getElementById('event-editor').querySelector('[name="event-start"]'),
             end = document.getElementById('event-editor').querySelector('[name="event-end"]'),
             title = document.getElementById('event-editor').querySelector('[name="event-caption"]'),
@@ -284,6 +317,7 @@ function UpdateEvent(time) {
         }
         eventslist[index] = formData
     }
+    Hide(event)
     UpdateLocalStorage()
     GetEventList()
     RebuildCalendar()
@@ -339,6 +373,13 @@ function Hide(event) {
 
 }
 
+function CloseNotification(t) {
+    while (t.className!="notification") {
+        t=t.parentNode
+    }
+    t.remove()
+}
+
 
 const hex2rgb = (hex) => {
     const [r, g, b] = hex.match(/\w\w/g).map(x => parseInt(x, 16));
@@ -360,7 +401,6 @@ function RGBToHex(r, g, b) {
 }
 
 function GetEventByID(id) {
-    /* v = time.split(":");
-    res = Number(v[0]) * 60 + Number(v[1]); */
+   
     return eventslist.find(o => o.id == id);
 }
