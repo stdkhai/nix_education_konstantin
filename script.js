@@ -1,55 +1,14 @@
-import { log } from "console";
 import * as http from "http";
 import { readFile } from 'node:fs';
-
-
 const host = 'localhost';
 const port = 8000;
 
-let indexFile;
+let indexFile, stock;
 
-function NewUser(id, u, f, l, e, psw, ph) {
-    this.id = id;
-    this.username = u;
-    this.firstName = f;
-    this.lastname = l;
-    this.email = e;
-    this.password = psw;
-    this.phone = ph;
-}
-
-const users = {
-    id: 0,
-    username: "Paulo",
-    firstName: "Peter",
-    lastname: "Parker",
-    email: "mail@gmail.com",
-    password: "123456",
-    phone: "091-432-12-74"
-};
-
-
-const arr = [{
-    id: 1,
-    username: "Paulo123",
-    firstName: "Peter",
-    lastname: "Parker",
-    email: "mail@gmail.com",
-    password: "123456",
-    phone: "091-432-12-74"
-},
-{
-    id: 2,
-    username: "Paulo567",
-    firstName: "Peter",
-    lastname: "Parker",
-    email: "mail@gmail.com",
-    password: "123456",
-    phone: "091-432-12-74"
-}];
-
-
-
+const books = JSON.stringify([
+    { title: "The Alchemist", author: "Paulo Coelho", year: 1988 },
+    { title: "The Prophet", author: "Kahlil Gibran", year: 1923 }
+]);
 
 const authors = JSON.stringify([
     { name: "Paulo Coelho", countryOfBirth: "Brazil", yearOfBirth: 1947 },
@@ -58,34 +17,20 @@ const authors = JSON.stringify([
 
 const requestListener = function (req, res) {
     try {
-
         switch (req.url) {
-            case "/user":
-                /* res.setHeader("Content-Type", "application/json");
-                res.writeHead(200); */
-                /*  res.end(books); */
-                user(req, res)
-                break
-            case "/user/createWithArray":
-                if (req.method == "POST") {
-                    res.setHeader("Content-Type", "text/html");
-                    res.writeHead(200);
-                    req.body = JSON.stringify(arr);
-                    res.end(req.body)
-                }
-                break;
             case "/":
-                res.setHeader("Content-Type", "text/html");
+                //res.setHeader('Access-Control-Allow-Origin', '*');
+                //res.setHeader("Access-Control-Allow-Headers","Access-Control-Allow-Headers");
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader("Access-Control-Allow-Credentials", "true");
+                res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+                res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
                 res.writeHead(200);
-                res.end(indexFile);
+                console.log(stock);
+                req.body = JSON.stringify(stock);
+                res.end(JSON.stringify(stock));
                 break
             default:
-                console.log(req.url.split("/")[1]);
-                if (req.url.split("/")[1] == 'user') {
-                    EditUserByUsername(res, req, req.url.split("/")[2])
-                    console.log("test");
-                    break
-                }
                 res.setHeader("Content-Type", "application/json");
                 res.writeHead(404);
                 res.end(`{code: 404, message: "Resource not found"}`);
@@ -93,59 +38,13 @@ const requestListener = function (req, res) {
     } catch (e) {
         res.setHeader("Content-Type", "application/json");
         res.writeHead(500);
+        console.log(e)
         res.end(JSON.stringify(e));
     }
 }
 
-function EditUserByUsername(res, req, username) {
-    
-    switch (req.method) {
-        case "GET":
-            res.setHeader("Content-Type", "application/json");
-            if (username == "") {
-
-                res.writeHead(400);
-                res.end(`{code: 400, message: "Invalid username supplied"}`);
-            } else {
-                let obj = arr.find(o => o.username === username);
-                if (obj == null) {
-                    res.writeHead(404);
-                    res.end(`{code: 404, message: "User not found"}`);
-                } else {
-                    res.writeHead(200);
-                    res.end(JSON.stringify(obj));
-                }
-            }
-
-            break;
-        default:
-            break;
-    }
-}
-
-
-
-function user(req, res) {
-    switch (req.method) {
-        case "GET":
-            res.setHeader("Content-Type", "application/json");
-            res.writeHead(200);
-            res.end(JSON.stringify(users));
-            break
-        case "POST":
-            res.setHeader("Content-Type", "text/html");
-            res.writeHead(200);
-            const user = new NewUser(1, "username", "fn", "ln", "mail", "123", "3809");
-            res.end(JSON.stringify(user));
-            break
-        default:
-            res.setHeader("Content-Type", "application/json");
-            res.writeHead(404);
-            res.end(`{code: 404, message: "Resource not found"}`);
-    }
-}
-
 const server = http.createServer(requestListener);
+
 
 
 readFile(process.cwd() + "/index.html", 'utf8', ((err, data) => {
@@ -159,3 +58,31 @@ readFile(process.cwd() + "/index.html", 'utf8', ((err, data) => {
         console.log(`Server is running on http://${host}:${port}`);
     });
 }));
+readFile("device.csv", 'utf-8', ((err, data) => {
+
+    let csv = data;
+    var lines = csv.split("\n");
+
+    var result = [];
+
+    var headers = lines[0].split(",");
+    for (let i = 0; i < headers.length; i++) {
+        headers[i] = headers[i].replace(/^\"+|\"+$/g, '');
+    }
+
+
+    for (var i = 1; i < lines.length; i++) {
+
+        var obj = {};
+        var currentline = lines[i].split(",");
+
+        for (var j = 0; j < headers.length; j++) {
+            currentline[j] = currentline[j].replace(/^\"+|\"+$/g, '');
+            obj[headers[j]] = currentline[j];
+        }
+
+        result.push(obj);
+
+    }
+    stock = result;
+}))
