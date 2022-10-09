@@ -1,3 +1,4 @@
+
 let current = 0;
 let prev = -1;
 let slides = document.getElementsByClassName("slide");
@@ -7,6 +8,16 @@ let storageFilter = [];
 let osFilter = [];
 let displayFilter = [];
 let currentFilter = [];
+let btnEnabled, tempColor, items;
+
+let response = await fetch("http://localhost:8000/");
+
+if (response.ok) {
+    items = await response.json();
+    console.log(items);
+} else {
+    alert("Ошибка HTTP: " + response.status);
+}
 
 
 buildCart(localStorage)
@@ -21,7 +32,7 @@ setInterval(function () {
     }
     prev = current;
     $('.slideshow-title').html(slides[current].attributes["alt"].nodeValue)
-    id = slides[current].attributes["class"].nodeValue.split(" ")[1]
+    let id = slides[current].attributes["class"].nodeValue.split(" ")[1]
     $('#adds').attr('class', `add-to-cart slideshow ${id}`)
 }, 3000);
 
@@ -32,7 +43,7 @@ function build(itemsArr) {
     let itemsNum = itemsArr.length
     for (let i = 0; i < itemsNum; i++) {
         var div = document.createElement("div");
-        let enabled = itemsArr[i].orderInfo.inStock
+        let enabled = itemsArr[i].orderInfo_inStock
         if (enabled > 0) {
             enabled = "fa-circle-check"
             btnEnabled = ""
@@ -49,7 +60,7 @@ ${itemsArr[i].name}
 </div>
 <div class="stock-status">
     <i class="fa-solid ${enabled}"></i>
-    <div class="stock-count"><span>${itemsArr[i].orderInfo.inStock}</span>left in stock</div>
+    <div class="stock-count"><span>${itemsArr[i].orderInfo_inStock}</span>left in stock</div>
 </div>
 <div class="product-price">
     Price: <span>${itemsArr[i].price}</span>$
@@ -59,7 +70,7 @@ ${itemsArr[i].name}
     <div class="stats-left">
         <i class="fa-solid fa-heart"></i>
         <div class="reviews">
-            <span>${itemsArr[i].orderInfo.reviews}%</span> Positive reviews <br> Above avarage
+            <span>${itemsArr[i].orderInfo_reviews}%</span> Positive reviews <br> Above avarage
         </div>
     </div>
     <div class="orders">
@@ -75,12 +86,15 @@ build(items)
 
 items.forEach(e => {
     tempColor = e.color
-    tempColor.forEach(i => {
-        if (colorFilter[i] == null) {
-            colorFilter[i] = []
-        }
-        colorFilter[i].push(e)
-    });
+    if (tempColor != null) {
+        tempColor.forEach(i => {
+            if (colorFilter[i] == null) {
+                colorFilter[i] = []
+            }
+            colorFilter[i].push(e)
+        });
+    }
+
     if (e.storage != null) {
         if (storageFilter[e.storage] == null) {
             storageFilter[e.storage] = []
@@ -100,6 +114,7 @@ items.forEach(e => {
         osFilter[e.os].push(e)
     }
     if (e.display != null) {
+        let val;
         switch (true) {
             case Number(e.display) > 2 && Number(e.display) <= 5:
                 val = "2-5"
@@ -179,7 +194,7 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
 }
-document.getElementById("adds").onclick=function (event) {
+document.getElementById("adds").onclick = function (event) {
     let target = event.target;
     addToCart(target.className.split(" ")[2])
 }
@@ -196,8 +211,8 @@ for (let i = 0; i < a.length; i++) {
 } */
 
 function addToCart(id) {
-    val = localStorage.getItem(id)
-    if (val==4) {
+    let val = localStorage.getItem(id)
+    if (val == 4) {
         alert("Неможливо додати більше 4 одиниць товару!");
         return;
     }
@@ -229,7 +244,7 @@ function accordion(section, heading, list) {
 accordion('.filter-item', '.filter-item-inner-heading', '.filter-attribute-list');
 
 document.getElementById("filter").onclick = function () {
-    state = document.getElementsByClassName('filter')[0].className.split(" ")[1]
+    let state = document.getElementsByClassName('filter')[0].className.split(" ")[1]
     switch (state) {
         case "active":
             document.getElementsByClassName('container-accordeon')[0].style.display = "none";
@@ -261,7 +276,7 @@ containerCards.onclick = function (event) {
         target = target.parentNode
     }
     let cardID = target.className.split(" ")[1] - 1;
-    let enabled = items[cardID].orderInfo.inStock
+    let enabled = items[cardID].orderInfo_inStock
     if (enabled > 0) {
         enabled = "fa-circle-check"
         btnEnabled = ""
@@ -283,7 +298,7 @@ containerCards.onclick = function (event) {
                                     <div class="stats-left">
                                         <i class="fa-solid fa-heart"></i>
                                         <div class="reviews">
-                                            <span>${items[cardID].orderInfo.reviews}%</span> Positive reviews <br> Above avarage
+                                            <span>${items[cardID].orderInfo_reviews}%</span> Positive reviews <br> Above avarage
                                         </div>
                                     </div>
                                     <div class="orders">
@@ -293,18 +308,18 @@ containerCards.onclick = function (event) {
                                 <div class="description">
                                     <p>Color: <span>${items[cardID].color}</span></p>
                                     <p>Operating System: <span>${items[cardID].os}</span></p>
-                                    <p>Chip: <span>${items[cardID].chip.name}</span></p>
-                                    <p>Height: <span>${items[cardID].size.height}</span></p>
-                                    <p>Width: <span>${items[cardID].size.width}</span></p>
-                                    <p>Depth: <span>${items[cardID].size.depth}</span></p>
-                                    <p>Weight: <span>${items[cardID].size.weight}</span></p>
+                                    <p>Chip: <span>${items[cardID].chip_name}</span></p>
+                                    <p>Height: <span>${items[cardID].size_height}</span></p>
+                                    <p>Width: <span>${items[cardID].size_width}</span></p>
+                                    <p>Depth: <span>${items[cardID].size_depth}</span></p>
+                                    <p>Weight: <span>${items[cardID].size_weight}</span></p>
                                 </div>
                             </div>
                             <div class="modal-price">
                                 <span>$ ${items[cardID].price}</span>
                                 <div class="stock">
                                   <br>
-                                Stock: <b>${items[cardID].orderInfo.inStock}</b>pcs.  
+                                Stock: <b>${items[cardID].orderInfo_inStock}</b>pcs.  
                                 </div>
                                 
                                 <button class='add-to-cart${btnEnabled} ${items[cardID].id}'${btnEnabled}>Add to cart</button>
@@ -335,11 +350,11 @@ document.getElementById("modal").onclick = function (event) {
 /* update current filters */
 
 function updateFilter() {
-    priceFilter = [document.getElementById("price-attribute-min").value, document.getElementById("price-attribute-max").value]
-    storageFilter = [...document.querySelectorAll('#filter-attribute-storage input:checked')].map(n => n.id.split("-")[2])
-    osFilter = [...document.querySelectorAll('#filter-attribute-os input:checked')].map(n => { if (n.id.split("-")[2] == "other") { return null } else { return n.id.split("-")[2]; } })
-    colorFilter = [...document.querySelectorAll('#filter-attribute-colour input:checked')].map(n => n.id.split("-")[2])
-    displayFilter = [...document.querySelectorAll('#filter-attribute-display input:checked')].map(n => convertDisplay(n.id))
+    let priceFilter = [document.getElementById("price-attribute-min").value, document.getElementById("price-attribute-max").value]
+    let storageFilter = [...document.querySelectorAll('#filter-attribute-storage input:checked')].map(n => n.id.split("-")[2])
+    let osFilter = [...document.querySelectorAll('#filter-attribute-os input:checked')].map(n => { if (n.id.split("-")[2] == "other") { return null } else { return n.id.split("-")[2]; } })
+    let colorFilter = [...document.querySelectorAll('#filter-attribute-colour input:checked')].map(n => n.id.split("-")[2])
+    let displayFilter = [...document.querySelectorAll('#filter-attribute-display input:checked')].map(n => convertDisplay(n.id))
     build(items.filter((n => (
         (priceFilter[1] == 0 || (n.price >= priceFilter[0] && n.price <= priceFilter[1])) &&
         (!colorFilter.length || checkColour(n, colorFilter)) &&
@@ -411,7 +426,7 @@ function buildCart(storage) {
         document.getElementById("container-rows").removeChild(document.getElementById("container-rows").firstChild)
     }
     Object.keys(storage).forEach(key => {
-        el = GetItemByID(Number(key))
+        let el = GetItemByID(Number(key))
         let buttonMinus, buttonPlus = ""
         if (storage[key] == 1) {
             buttonMinus = " disabled"
@@ -466,7 +481,7 @@ function GetItemByID(id) {
 function GetPrice() {
     let res = 0
     Object.keys(localStorage).forEach(key => {
-        e = GetItemByID(key)
+        let e = GetItemByID(key)
         res += localStorage[key] * e.price
     })
     return res
@@ -503,7 +518,7 @@ document.getElementById("cart").onclick = function (event) {
     while (target.id != "modal-cart") {
         target = target.parentNode
         console.log(target);
-        if (target!=null){
+        if (target != null) {
             break
         }
         if (target.id == "modal-cart") {
@@ -534,3 +549,5 @@ function changeCount(id, change) {
     buildCart(localStorage)
 
 }
+
+
