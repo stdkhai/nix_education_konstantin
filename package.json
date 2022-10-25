@@ -1,0 +1,15 @@
+{
+  "name": "nodehw4",
+  "version": "1.0.0",
+  "description": "restAPI app",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./index.js"
+  },
+  "author": "Konstantin",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security"
+  }
+}
