@@ -1,34 +1,34 @@
 var express = require('express');
 var fs = require('fs');
 var router = express.Router();
-
+const ContactModel = require("./models/contact")
+const mongoose = require("mongoose");
+mongoose.connect("mongodb+srv://root:XRASFtjgeDoqd3av@cluster0.l0s3vzx.mongodb.net/api", { useUnifiedTopology: true, useNewUrlParser: true });
 router.use(express.json());
+
 
 router.get('/contacts', function (req, res) {
     res.statusCode = 200;
-    res.json(listContacts());
+    ContactModel.find({}, { _id: 0, __v: 0 }, (err, list) => {
+        if (err) return { "message": err };
+        res.json(list);
+    });
 });
 
 router.get('/contacts/:userID', function (req, res) {
-    if (req.body == undefined) {
-        let info = getById(req.params["userID"])
-        if (info == undefined) {
+
+    ContactModel.findOne({ id: req.params["userID"] }, { _id: 0, __v: 0 }, (err, list) => {
+        if (err) return { "message": err };
+        if (list == null) {
             res.statusCode = 404;
             res.json({ "message": "Not found" });
         } else {
+            res.json(list);
             res.statusCode = 200;
-            res.json(info);
         }
-    } else {
-        let args=updateContact(req.params["userID"],req.body);
-        if (args!=undefined) {
-            res.json(args);
-            res.statusCode=200;
-        }else{
-            res.json({"message": "Contact not found"});
-            res.statusCode=404;
-        }
-    }
+
+
+    });
 
 });
 
@@ -37,75 +37,68 @@ router.post('/contacts', function (req, res) {
         res.json({ "message": "Missing required name field" });
         res.statusCode = 400;
     } else {
-        res.json(addContact(req.body));
-        res.statusCode = 201;
-
+        const user = new ContactModel({
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+        });
+        ContactModel.count().then((count) => {
+            user.id = count + 1;
+            user.save((err) => {
+                if (err) {
+                    res.statusCode = 404;
+                    res.json({ "message": err });
+                } else {
+                    res.json(user);
+                    res.statusCode = 200;
+                }
+            });
+        });
     }
 });
 
 router.delete('/contacts/:userID', function (req, res) {
-    if (removeContact(req.params["userID"])) {
-        res.json({ "message": "Сontact deleted" });
-        res.statusCode = 200;
-    } else {
-        res.statusCode = 404;
-        res.json({ "message": "Contact not found" });
-    }
+    ContactModel.findOneAndDelete({ id: req.params["userID"] }, (err, b) => {
+        if (b == null) {
+            res.json({ "message": "Contact not found" });
+            res.statusCode = 404;
+        } else {
+            res.json({ "message": "Contact deleted" });
+            res.statusCode = 200;
+        }
+    });
 });
 
-function listContacts() {
-    const data = JSON.parse(fs.readFileSync(__dirname + '/data/contacts.json'));
-    return data
-}
-
-function getById(id) {
-    return listContacts().find(e => e.id == id)
-}
+router.put('/contacts/:userID', (req, res) => {
+    if (!req.body) {
+        res.statusCode = 400;
+        res.json({ "message": "Missing fields" });
+    } else {
+        const cid = req.params["userID"];
+        console.log(cid);
+        const user = {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+        };
+        ContactModel.findOneAndUpdate({ "id": Number(cid) }, user, (err, user) => {
+            if (err) {
+                console.log(err);
+                res.statusCode = 404;
+                res.json({ "message": "Contact not found" });
+            } else {
+                res.statusCode = 200;
+                res.json(user);
+            }
+        })
+    }
+})
 
 function BodyValidate(body) {
     return body.hasOwnProperty("name") && body.hasOwnProperty("phone") && body.hasOwnProperty("email")
 }
 
-function addContact(body) {
-    let copy = listContacts().slice();
-    copy.sort((a, b) => a.id - b.id);
-    body.id = Number(copy[copy.length - 1].id) + 1;
-    let data = listContacts();
-    data.push(body);
-    fs.writeFileSync(__dirname + '/data/contacts.json', JSON.stringify(data));
-    return body;
-}
 
-function removeContact(id) {
-    let copy = listContacts().slice();
-    let filtered = copy.filter(function (value, index, arr) {
-        return value.id != id;
-    });
-    fs.writeFileSync(__dirname + '/data/contacts.json', JSON.stringify(filtered));
-    return filtered.length == copy.length;
-}
 
-function updateContact(id,body) {
-    let copy = listContacts().slice();
-    let found =copy.find(e=>e.id==id);
-    if (found==undefined) {
-        return found;
-    }else{
-        for (const key in body) {
-            if (body.hasOwnProperty.call(body, key)) {
-                found[key]=body[key]
-            }
-        }
-        for (let i = 0; i < copy.length; i++) {
-           if (copy.id==id) {
-             copy[i]=found;
-             fs.writeFileSync(__dirname + '/data/contacts.json', JSON.stringify(copy));
-             
-            }
-            
-        }
-        return found;
-    }
-}
 
 module.exports = router;
