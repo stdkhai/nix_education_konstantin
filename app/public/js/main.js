@@ -9,9 +9,8 @@ let osFilter = [];
 let displayFilter = [];
 let currentFilter = [];
 let btnEnabled, tempColor, items;
-
-let response = await fetch("http://localhost:8000/");
-
+let response = await fetch("/back");
+document.cookie = `macOutletTOKEN=secret; max-age=3600`;
 if (response.ok) {
     items = await response.json();
     console.log(items);
@@ -37,6 +36,7 @@ setInterval(function () {
 }, 3000);
 
 function build(itemsArr) {
+    console.log(itemsArr);
     while (document.getElementById("container-cards").firstChild) {
         document.getElementById("container-cards").removeChild(document.getElementById("container-cards").firstChild)
     }
@@ -198,17 +198,20 @@ document.getElementById("adds").onclick = function (event) {
     let target = event.target;
     addToCart(target.className.split(" ")[2])
 }
-/* var a = document.getElementsByClassName('add-to-cart');
-for (let i = 0; i < a.length; i++) {
-    a[i].onclick = function (event) {
-        let target=event.target;
-        id = a[i].parentElement.className.split(" ")[a[i].parentElement.className.split(" ").length - 1];
-        if (id == "text-container") {
-            id = a[i].attributes["class"].nodeValue.split(" ")[2];
-        }
-        addToCart(id);
-    };
-} */
+
+document.getElementById("search").onkeyup = function (event) {
+    let target = event.target;
+    console.log(target.value);
+    fetch(`/back/${target.value}`)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            items = data;
+        });
+    build(items);
+};
+
 
 function addToCart(id) {
     let val = localStorage.getItem(id)
