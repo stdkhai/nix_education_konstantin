@@ -19,8 +19,9 @@ router.get('/', function(req, res) {
 
 router.get('/:search', function(req, res) {
     tofind=req.params.search.toLowerCase();
-    let found = stock.filter(n=>n.name.toLowerCase().indexOf(tofind)!=-1);
-    res.json(found);
+    Product.find({}, function(err, products) {
+        res.json(products.filter(n=>n.name.toLowerCase().indexOf(tofind)!=-1)).status(200);
+    })
 })
 
 fs.readFile(__dirname+"/device.csv", 'utf-8', ((err, data) => {

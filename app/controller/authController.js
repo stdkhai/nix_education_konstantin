@@ -17,6 +17,15 @@ class authController {
     async registration(req, res) {
         try {
             const {name, password, email} = (req.body);
+            if (!name||name==""||name.length<3) {
+                return res.status(400).json({message: 'User name must be 3 chars or longer'});
+            }
+            if (!password||password=="") {
+                return res.status(400).json({message: 'Invalid password'});
+            }
+            if(!validateEmail(email)){
+                return res.status(400).json({message: 'Invalid email'});
+            }
             const candidate = await User.findOne({Email:email});
             if (candidate) {
                 return res.status(400).json({message: 'User with similar email already exists'});
@@ -69,5 +78,13 @@ class authController {
         }       
     }
 }
+
+const validateEmail = (email) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
 
 module.exports=authController;

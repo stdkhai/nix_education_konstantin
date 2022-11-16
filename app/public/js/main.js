@@ -240,7 +240,19 @@ document.getElementById("search").onkeyup = function (event) {
         })
 };
     
-
+document.getElementById("search").onblur=function (event) {
+    let target = event.target;
+    fetch(`/back/${target.value}`)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            items = data;
+        })
+        .then(() => {
+            build(items);
+        })
+};
 
 function addToCart(id) {
     let val = localStorage.getItem(id)
@@ -607,7 +619,7 @@ document.getElementById("cart").onclick = function (event) {
 
 document.getElementById('out').onclick = () => {
     var cookies = document.cookie.split(";");
-
+    localStorage.clear();
     for (var i = 0; i < cookies.length; i++) {
         var cookie = cookies[i];
         var eqPos = cookie.indexOf("=");
