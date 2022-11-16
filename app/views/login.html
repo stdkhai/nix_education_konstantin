@@ -9,10 +9,15 @@
 </head>
 <body>
     <form action="">
-        <label for="email">E-mail</label>
+        <div class="span">
+            <label for="email">E-mail</label>
         <input type="email" name="email" id="email" placeholder="Enter your email">
-        <label for="password">Password</label>
+        </div>
+        <div class="span">
+            <label for="password">Password</label>
         <input type="password" name="password" id="password" placeholder="Enter your password">
+        </div>
+        
         <div id="msg"></div>
         <input type="button" class="btn" id="log" value="Log in">
         <a href="../auth">Register</a>
