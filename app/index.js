@@ -8,16 +8,17 @@ const mainRouter = require('./routes/mainRouter');
 const checkToken = require('./middleware/main');
 
 const app = express();
-app.use(cookieParser());
-app.use('/back', backend);
-/* app.use('/auth', authRouter);
-app.use('/main', checkToken, mainRouter);
- app.use('', (req, res) => {
-  res.redirect('/main');
-}) */
-app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use('/back', backend);
+app.use('/auth', authRouter);
+app.use('/main', checkToken, mainRouter);
+app.get('/', (req, res) => {
+  res.redirect('/main');
+})
+app.use(express.static(__dirname + "/public"));
+
 
 const mongoDB = "mongodb+srv://root:XRASFtjgeDoqd3av@cluster0.l0s3vzx.mongodb.net/macOutlet?retryWrites=true&w=majority";
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });

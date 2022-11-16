@@ -514,6 +514,10 @@ li {
     margin: 20px 0;
 }
 
+#out{
+    color:red;
+}
+
 
 @media (max-width: 1250px) {
     .modal-content{

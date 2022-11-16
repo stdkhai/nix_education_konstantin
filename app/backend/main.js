@@ -3,6 +3,13 @@ var router = express.Router();
 let stock;
 const fs = require('fs');
 const Product=require('../models/items');
+const User=require('../models/users')
+const bodyParser = require('body-parser');
+
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: true }));
+
+
 
 router.get('/', function(req, res) {
     Product.find({}, function(err, products) {

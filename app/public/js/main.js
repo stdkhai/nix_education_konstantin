@@ -10,10 +10,9 @@ let displayFilter = [];
 let currentFilter = [];
 let btnEnabled, tempColor, items;
 let response = await fetch("/back");
-document.cookie = `macOutletTOKEN=secret; max-age=3600`;
+
 if (response.ok) {
     items = await response.json();
-    console.log(items);
 } else {
     alert("Ошибка HTTP: " + response.status);
 }
@@ -36,7 +35,6 @@ setInterval(function () {
 }, 3000);
 
 function build(itemsArr) {
-    console.log(itemsArr);
     while (document.getElementById("container-cards").firstChild) {
         document.getElementById("container-cards").removeChild(document.getElementById("container-cards").firstChild)
     }
@@ -86,13 +84,42 @@ build(items)
 
 items.forEach(e => {
     tempColor = e.color
-    if (tempColor != null) {
-        tempColor.forEach(i => {
-            if (colorFilter[i] == null) {
-                colorFilter[i] = []
-            }
-            colorFilter[i].push(e)
-        });
+    console.log(colorFilter);
+    if (e.color_0) {
+        if (colorFilter[e.color_0] == null) {
+            colorFilter[e.color_0] = []
+        }
+        colorFilter[e.color_0].push(e)
+    }
+    if (e.color_1) {
+        if (colorFilter[e.color_1] == null) {
+            colorFilter[e.color_1] = []
+        }
+        colorFilter[e.color_1].push(e)
+    }
+    if (e.color_2) {
+        if (colorFilter[e.color_2] == null) {
+            colorFilter[e.color_2] = []
+        }
+        colorFilter[e.color_2].push(e)
+    }
+    if (e.color_3) {
+        if (colorFilter[e.color_3] == null) {
+            colorFilter[e.color_3] = []
+        }
+        colorFilter[e.color_3].push(e)
+    }
+    if (e.color_4) {
+        if (colorFilter[e.color_4] == null) {
+            colorFilter[e.color_4] = []
+        }
+        colorFilter[e.color_4].push(e)
+    }
+    if (e.color_5) {
+        if (colorFilter[e.color_5] == null) {
+            colorFilter[e.color_5] = []
+        }
+        colorFilter[e.color_5].push(e)
     }
 
     if (e.storage != null) {
@@ -201,16 +228,18 @@ document.getElementById("adds").onclick = function (event) {
 
 document.getElementById("search").onkeyup = function (event) {
     let target = event.target;
-    console.log(target.value);
     fetch(`/back/${target.value}`)
         .then((response) => {
             return response.json();
         })
         .then((data) => {
             items = data;
-        });
-    build(items);
+        })
+        .then(() => {
+            build(items);
+        })
 };
+    
 
 
 function addToCart(id) {
@@ -309,7 +338,7 @@ containerCards.onclick = function (event) {
                                     </div>
                                 </div>
                                 <div class="description">
-                                    <p>Color: <span>${items[cardID].color}</span></p>
+                                    <p>Color: <span>${items[cardID].color_0}</span></p>
                                     <p>Operating System: <span>${items[cardID].os}</span></p>
                                     <p>Chip: <span>${items[cardID].chip_name}</span></p>
                                     <p>Height: <span>${items[cardID].size_height}</span></p>
@@ -353,13 +382,14 @@ document.getElementById("modal").onclick = function (event) {
 /* update current filters */
 
 function updateFilter() {
-    let priceFilter = [document.getElementById("price-attribute-min").value, document.getElementById("price-attribute-max").value]
+    let priceFilter = [Number(document.getElementById("price-attribute-min").value), Number(document.getElementById("price-attribute-max").value)]
     let storageFilter = [...document.querySelectorAll('#filter-attribute-storage input:checked')].map(n => n.id.split("-")[2])
     let osFilter = [...document.querySelectorAll('#filter-attribute-os input:checked')].map(n => { if (n.id.split("-")[2] == "other") { return null } else { return n.id.split("-")[2]; } })
     let colorFilter = [...document.querySelectorAll('#filter-attribute-colour input:checked')].map(n => n.id.split("-")[2])
     let displayFilter = [...document.querySelectorAll('#filter-attribute-display input:checked')].map(n => convertDisplay(n.id))
+    console.log(priceFilter);
     build(items.filter((n => (
-        (priceFilter[1] == 0 || (n.price >= priceFilter[0] && n.price <= priceFilter[1])) &&
+        (priceFilter[1] == 0 && priceFilter[0]<=n.price ||  (n.price >= priceFilter[0] && n.price <= priceFilter[1])) &&
         (!colorFilter.length || checkColour(n, colorFilter)) &&
         (!storageFilter.length || (n.storage != null && storageFilter.includes(n.storage.toString()))) &&
         (!osFilter.length || osFilter.includes(n.os)) &&
@@ -371,15 +401,35 @@ let filtersCB = document.getElementsByClassName("filter-attribute-checkbox ib-m"
 for (let i = 0; i < filtersCB.length; i++) {
     filtersCB[i].onchange = updateFilter
 }
+document.getElementById("price-attribute-min").onblur = function () {
+    let min=Number(document.getElementById("price-attribute-min").value);
+    let max=Number(document.getElementById("price-attribute-max").value);
+    if (max==0) {
+        updateFilter()
+        return
+    }
+    if (max < min) {
+        document.getElementById("price-attribute-min").value = 0;
+    }
+    updateFilter()
+}
 document.getElementById("price-attribute-max").onblur = function () {
-    if (document.getElementById("price-attribute-max").value < document.getElementById("price-attribute-min").value) {
-        document.getElementById("price-attribute-min").value = document.getElementById("price-attribute-max").value;
+    let min=Number(document.getElementById("price-attribute-min").value);
+    let max=Number(document.getElementById("price-attribute-max").value);
+    if (max==0) {
+        updateFilter()
+        return
+    }
+    if (max < min) {
+        console.log(document.getElementById("price-attribute-max").value);
+        console.log(document.getElementById("price-attribute-min").value);
+        document.getElementById("price-attribute-min").value = 0;
     }
     updateFilter()
 }
 
 function convertDisplay(diap) {
-    temp = diap.split("-");
+    let temp = diap.split("-");
     switch (true) {
         case temp.length == 4:
             return [temp[2], temp[3]]
@@ -393,10 +443,26 @@ function convertDisplay(diap) {
 
 function checkColour(item, filterArr) {
     for (let i = 0; i < filterArr.length; i++) {
-        if (item.color.includes(filterArr[i])) {
+        if (item.color_0 && item.color_0 == filterArr[i]) {
+            return true
+        }
+        if (item.color_1 && item.color_1 == filterArr[i]) {
+            return true
+        }
+        if (item.color_2 && item.color_2 == filterArr[i]) {
+            return true
+        }
+        if (item.color_3 && item.color_3 == filterArr[i]) {
+            return true
+        }
+        if (item.color_4 && item.color_4 == filterArr[i]) {
+            return true
+        }
+        if (item.color_5 && item.color_5 == filterArr[i]) {
             return true
         }
     }
+    return false
 }
 
 function checkDisplay(item, filterArr) {
@@ -520,7 +586,6 @@ document.getElementById("cart").onclick = function (event) {
     }
     while (target.id != "modal-cart") {
         target = target.parentNode
-        console.log(target);
         if (target != null) {
             break
         }
@@ -539,6 +604,19 @@ document.getElementById("cart").onclick = function (event) {
         return
     }
 }
+
+document.getElementById('out').onclick = () => {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+    window.location.href = '/';
+}
+
 
 function changeCount(id, change) {
     switch (change) {

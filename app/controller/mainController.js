@@ -4,7 +4,7 @@ const Product=require('../models/items');
 class mainController {
     async getMain(req, res) {
         try {
-            res.status(200).sendFile(path.resolve('app/public/css/main.css'));
+            res.status(200).sendFile(path.resolve('app/views/index.html'));
         } catch(err) {
             console.log(err);
             res.status(400).json({message: 'Response error'});

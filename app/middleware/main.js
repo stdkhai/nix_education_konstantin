@@ -5,13 +5,14 @@ function checkToken (req, res, next) {
     try {
         const token = req.cookies.macOutletTOKEN;
         if(!token) {
-            res.redirect('/auth');
+            res.redirect('/auth/login');
+            return
         }
         jwt.verify(token, key.secret);
         next()
     } catch (err) {
         console.log(err);
-        res.redirect('/auth');
+        res.redirect('/auth/login');
     }
 }
 

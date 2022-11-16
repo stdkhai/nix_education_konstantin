@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const key = require('../config/tokenKey');
 
-
 function generateAccessToken(id, username) {
     const payload = {
         id,
@@ -17,16 +16,15 @@ function generateAccessToken(id, username) {
 class authController {
     async registration(req, res) {
         try {
-            console.log(req.body);
-            const {username, password, email} = req.body;
-            const candidate = await User.findOne({username});
+            const {name, password, email} = (req.body);
+            const candidate = await User.findOne({Email:email});
             if (candidate) {
-                return res.status(400).json({message: 'User with similar name already exists'});
+                return res.status(400).json({message: 'User with similar email already exists'});
             }
             const hashPassword = bcrypt.hashSync(password, 5);
-            const user = new User({username, password: hashPassword, email});
+            const user = new User({Name:name, Password: hashPassword, Email:email});
             await user.save();
-            res.status(200).json({message: '<p style="color: green;">User has been registered please login</p>'});
+            res.status(200).json({message: 'User has been registered please login'});
         } catch(err) {
             console.log(err);
             res.status(400).json({message: "Registration error"});
@@ -35,16 +33,17 @@ class authController {
 
     async login(req, res) {
         try {
-            const {username, password} = req.body;
-            const user = await User.findOne({username});
+            const {email, password} = req.body;
+            const user = await User.findOne({Email:email});
             if (!user) {
                 return res.status(400).json("User with similar name didn't exist");
             }
-            const validPassword = bcrypt.compareSync(password, user.password);
+            const validPassword = bcrypt.compareSync(password, user.Password);
             if (!validPassword) {
                 return res.status(400).json('Entered invalid password');
             }
-            const token = generateAccessToken(user._id, user.username);
+            const token = generateAccessToken(user._id, user.Email);
+            res.cookie('macOutletTOKEN',token, {maxAge: 3600000});
             res.status(200).json({token});
         } catch(err) {
             console.log(err);
@@ -54,7 +53,16 @@ class authController {
 
     async getPage(req, res) {
         try {
-            res.sendFile(path.resolve('app/public/index.html'));
+            res.sendFile(path.resolve('app/views/register.html'));
+        } catch(err) {
+            console.log(err);
+            res.status(400).json('Response error');
+        }       
+    }
+
+    async getLogin(req, res) {
+        try {
+            res.sendFile(path.resolve('app/views/login.html'));
         } catch(err) {
             console.log(err);
             res.status(400).json('Response error');
