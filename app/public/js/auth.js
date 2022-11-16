@@ -14,3 +14,16 @@ document.getElementById('reg').onclick = () => {
         }));
 
 }
+
+
+let inputs=document.getElementsByClassName('animated');
+for (let i = 0; i < inputs.length; i++) {
+    inputs[i].onkeyup=()=>{
+        if (inputs[i].value!="") {
+            console.log(inputs[i].id);
+            document.getElementById(`_${inputs[i].id}`).className="filled"
+        }else{
+            document.getElementById(`_${inputs[i].id}`).className="";
+        }
+    }
+}

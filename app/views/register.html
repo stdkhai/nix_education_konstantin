@@ -9,12 +9,18 @@
 </head>
 <body>
     <form action="">
-        <label for="first_name">First Name</label>
-        <input type="text" name="first_name" id="first_name" placeholder="Enter your name">
-        <label for="email">E-mail</label>
-        <input type="email" name="email" id="email" placeholder="Enter your email">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" placeholder="Enter your password">
+        <div class="span">
+           <label id="_first_name" for="first_name">First Name</label>
+        <input type="text" class="animated" name="first_name" id="first_name"> 
+        </div>
+        <div class="span">
+            <label id="_email" for="email">E-mail</label>
+        <input type="email" class="animated" name="email" id="email">
+        </div>
+        <div class="span">
+            <label id="_password" for="password">Password</label>
+        <input type="password" class="animated" name="password" id="password" placeholder="Enter your password">
+        </div>
         <input type="button" class="btn" id="reg" value="Register">
         <div id="msg"></div>
         <a href="/auth/login">Log in</a>

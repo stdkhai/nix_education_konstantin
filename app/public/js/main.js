@@ -1,4 +1,3 @@
-
 let current = 0;
 let prev = -1;
 let slides = document.getElementsByClassName("slide");
@@ -16,6 +15,15 @@ if (response.ok) {
 } else {
     alert("Ошибка HTTP: " + response.status);
 }
+let cookiesparsed=document.cookie.split(";");
+for (let i = 0; i < cookiesparsed.length; i++) {
+    let cookie = cookiesparsed[i].split("=");
+    if (cookie[0]=="userName") {
+        document.getElementById('welcome').innerHTML=`Welcome, ${decodeURI(cookie[1])}`;
+    }
+    
+}
+
 
 
 buildCart(localStorage)
@@ -84,7 +92,6 @@ build(items)
 
 items.forEach(e => {
     tempColor = e.color
-    console.log(colorFilter);
     if (e.color_0) {
         if (colorFilter[e.color_0] == null) {
             colorFilter[e.color_0] = []
@@ -399,7 +406,6 @@ function updateFilter() {
     let osFilter = [...document.querySelectorAll('#filter-attribute-os input:checked')].map(n => { if (n.id.split("-")[2] == "other") { return null } else { return n.id.split("-")[2]; } })
     let colorFilter = [...document.querySelectorAll('#filter-attribute-colour input:checked')].map(n => n.id.split("-")[2])
     let displayFilter = [...document.querySelectorAll('#filter-attribute-display input:checked')].map(n => convertDisplay(n.id))
-    console.log(priceFilter);
     build(items.filter((n => (
         (priceFilter[1] == 0 && priceFilter[0]<=n.price ||  (n.price >= priceFilter[0] && n.price <= priceFilter[1])) &&
         (!colorFilter.length || checkColour(n, colorFilter)) &&
@@ -433,8 +439,6 @@ document.getElementById("price-attribute-max").onblur = function () {
         return
     }
     if (max < min) {
-        console.log(document.getElementById("price-attribute-max").value);
-        console.log(document.getElementById("price-attribute-min").value);
         document.getElementById("price-attribute-min").value = 0;
     }
     updateFilter()

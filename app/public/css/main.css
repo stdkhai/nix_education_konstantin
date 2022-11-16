@@ -80,10 +80,14 @@ h6 {
     justify-content: space-between;
 }
 
+#welcome{
+    color: var(--red);
+}
+
 .cart {
     position: relative;
     display: inline-block;
-    margin-right: 40px;
+    margin: 0 40px 10px 0;
 }
 
 .cart>img {
@@ -175,7 +179,9 @@ a .slideshow-title {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-
+    margin: 10px 0 0 0;
+    border: 1px solid black;
+    border-radius: 20px;
 }
 
 .container-filter .search {
@@ -266,6 +272,10 @@ a .slideshow-title {
     margin-bottom: 8px;
 }
 
+.card .stock-count{
+    margin-left: 10px;
+}
+
 span {
     font-weight: bold;
 }
@@ -278,7 +288,7 @@ span {
     width: 100%;
     justify-content: space-between;
     border-radius: 5px;
-    margin: 10px 0;
+    margin: 10px 0 0 0;
 }
 
 button.add-to-cart {
@@ -312,6 +322,10 @@ li {
     display: none;
     min-width: 350px;
     color: var(--darkblue);
+}
+
+h1.filter-item-inner-heading{
+    margin: 15px 0 0 25px;
 }
 
 .filter-item-inner-heading.minus:after {

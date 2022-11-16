@@ -33,7 +33,7 @@ class authController {
             const hashPassword = bcrypt.hashSync(password, 5);
             const user = new User({Name:name, Password: hashPassword, Email:email});
             await user.save();
-            res.status(200).json({message: 'User has been registered please login'});
+            res.status(200).json({message: '<p style="color: green">User has been registered please login</p>'});
         } catch(err) {
             console.log(err);
             res.status(400).json({message: "Registration error"});
@@ -53,6 +53,7 @@ class authController {
             }
             const token = generateAccessToken(user._id, user.Email);
             res.cookie('macOutletTOKEN',token, {maxAge: 3600000});
+            res.cookie('userName',user.Name, {maxAge: 3600000});
             res.status(200).json({token});
         } catch(err) {
             console.log(err);
