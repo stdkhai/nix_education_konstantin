@@ -630,39 +630,42 @@ function renderCard(target) {
                             <div class="modal-photo">
                                 <img src="img/${items[cardID].imgUrl}" alt="">
                             </div>
+                            <div class="modal-span">
                             <div class="modal-description">
-                                <h1>${items[cardID].name}</h1>
-                                <div class="product-stats">
-                                    <div class="stats-left">
-                                        <i class="fa-solid fa-heart"></i>
-                                        <div class="reviews">
-                                            <span>${items[cardID].orderInfo_reviews}%</span> Positive reviews <br> Above avarage
-                                        </div>
-                                    </div>
-                                    <div class="orders">
-                                        <span>${getRandomInt(300, 1000)}</span><br>orders
+                            <h1>${items[cardID].name}</h1>
+                            <div class="product-stats">
+                                <div class="stats-left">
+                                    <i class="fa-solid fa-heart"></i>
+                                    <div class="reviews">
+                                        <span>${items[cardID].orderInfo_reviews}%</span> Positive reviews <br> Above avarage
                                     </div>
                                 </div>
-                                <div class="description">
-                                    <p>Color: <span>${items[cardID].color_0}</span></p>
-                                    <p>Operating System: <span>${items[cardID].os}</span></p>
-                                    <p>Chip: <span>${items[cardID].chip_name}</span></p>
-                                    <p>Height: <span>${items[cardID].size_height}</span></p>
-                                    <p>Width: <span>${items[cardID].size_width}</span></p>
-                                    <p>Depth: <span>${items[cardID].size_depth}</span></p>
-                                    <p>Weight: <span>${items[cardID].size_weight}</span></p>
+                                <div class="orders">
+                                    <span>${getRandomInt(300, 1000)}</span><br>orders
                                 </div>
                             </div>
-                            <div class="modal-price">
-                                <span>$ ${items[cardID].price}</span>
-                                <div class="stock">
-                                  <br>
-                                Stock: <b>${items[cardID].orderInfo_inStock}</b>pcs.  
-                                </div>
-                                
-                                <button class='add-to-cart${btnEnabled} ${items[cardID].id}'${btnEnabled}>Add to cart</button>
+                            <div class="description">
+                                <p>Color: <span>${items[cardID].color_0}</span></p>
+                                <p>Operating System: <span>${items[cardID].os}</span></p>
+                                <p>Chip: <span>${items[cardID].chip_name}</span></p>
+                                <p>Height: <span>${items[cardID].size_height}</span></p>
+                                <p>Width: <span>${items[cardID].size_width}</span></p>
+                                <p>Depth: <span>${items[cardID].size_depth}</span></p>
+                                <p>Weight: <span>${items[cardID].size_weight}</span></p>
+                            </div>
+                        </div>
+                        <div class="modal-price">
+                            <span>$ ${items[cardID].price}</span>
+                            <div class="stock">
+                              <br>
+                            Stock: <b>${items[cardID].orderInfo_inStock}</b>pcs.  
+                            </div>
+                            
+                            <button class='add-to-cart${btnEnabled} ${items[cardID].id}'${btnEnabled}>Add to cart</button>
 
+                        </div>
                             </div>
+                            
                        
         `;
     document.getElementById("modal").style.display = "flex";
