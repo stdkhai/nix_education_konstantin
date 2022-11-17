@@ -15,13 +15,14 @@ if (response.ok) {
 } else {
     alert("Ошибка HTTP: " + response.status);
 }
-let cookiesparsed=document.cookie.split(";");
+let cookiesparsed = document.cookie.split("; ");
 for (let i = 0; i < cookiesparsed.length; i++) {
+    console.log(cookiesparsed[i]);
     let cookie = cookiesparsed[i].split("=");
-    if (cookie[0]=="userName") {
-        document.getElementById('welcome').innerHTML=`Welcome, ${decodeURI(cookie[1])}`;
+    if (cookie[0] == "userName") {
+        document.getElementById('welcome').innerHTML = `Welcome, ${decodeURI(cookie[1])}`;
     }
-    
+
 }
 
 
@@ -40,7 +41,9 @@ setInterval(function () {
     $('.slideshow-title').html(slides[current].attributes["alt"].nodeValue)
     let id = slides[current].attributes["class"].nodeValue.split(" ")[1]
     $('#adds').attr('class', `add-to-cart slideshow ${id}`)
-}, 3000);
+    $('.text-container').attr('class', `text-container ${id}`)
+    $('.slideshow-title').attr('class', `slideshow-title ${id}`)
+}, 6500);
 
 function build(itemsArr) {
     while (document.getElementById("container-cards").firstChild) {
@@ -66,10 +69,10 @@ ${itemsArr[i].name}
 </div>
 <div class="stock-status">
     <i class="fa-solid ${enabled}"></i>
-    <div class="stock-count"><span>${itemsArr[i].orderInfo_inStock}</span>left in stock</div>
+    <div class="stock-count"><span>${itemsArr[i].orderInfo_inStock}</span> left in stock</div>
 </div>
 <div class="product-price">
-    Price: <span>${itemsArr[i].price}</span>$
+Price: <span>${itemsArr[i].price}</span>$
 </div>
 <button class='add-to-cart${btnEnabled}'${btnEnabled}>Add to cart</button>
 <div class="product-stats">
@@ -246,8 +249,8 @@ document.getElementById("search").onkeyup = function (event) {
             build(items);
         })
 };
-    
-document.getElementById("search").onblur=function (event) {
+
+document.getElementById("search").onblur = function (event) {
     let target = event.target;
     fetch(`/back/${target.value}`)
         .then((response) => {
@@ -300,19 +303,34 @@ document.getElementById("filter").onclick = function () {
         case "active":
             document.getElementsByClassName('container-accordeon')[0].style.display = "none";
             document.getElementById("filter").className = "filter inactive"
-            document.getElementById("filter").children[0].style.background = "var(--blue)"
+            document.getElementById("filter").style.background = "var(--blue)"
             break;
 
         case "inactive":
             document.getElementsByClassName('container-accordeon')[0].style.display = "flex";
             document.getElementById('filter').className = "filter active"
-            document.getElementById("filter").children[0].style.background = "var(--black)"
+            document.getElementById("filter").style.background = "var(--black)"
             break;
     }
 
 }
 let containerCards = document.getElementById("container-cards")
 let cards = document.getElementsByClassName("card")
+
+document.getElementById('banner').onclick = (e) => {
+    let target = e.target;
+    let params = e.target.className.split(" ");
+    switch (params[0]) {
+        case "add-to-cart":
+            break;
+
+        default:
+            renderCard(target);
+            break;
+    }
+
+}
+
 
 containerCards.onclick = function (event) {
     let target = event.target;
@@ -326,60 +344,7 @@ containerCards.onclick = function (event) {
     while (target.parentNode.id != "container-cards") {
         target = target.parentNode
     }
-    let cardID = target.className.split(" ")[1] - 1;
-    let enabled = items[cardID].orderInfo_inStock
-    if (enabled > 0) {
-        enabled = "fa-circle-check"
-        btnEnabled = ""
-    } else {
-        enabled = "fa-circle-xmark"
-        btnEnabled = " disabled"
-    }
-    var div = document.createElement("div");
-    div.className = "modal-content"
-    div.innerHTML = `
-      
-                            <span class="modal-close">&times;</span>
-                            <div class="modal-photo">
-                                <img src="img/${items[cardID].imgUrl}" alt="">
-                            </div>
-                            <div class="modal-description">
-                                <h1>${items[cardID].name}</h1>
-                                <div class="product-stats">
-                                    <div class="stats-left">
-                                        <i class="fa-solid fa-heart"></i>
-                                        <div class="reviews">
-                                            <span>${items[cardID].orderInfo_reviews}%</span> Positive reviews <br> Above avarage
-                                        </div>
-                                    </div>
-                                    <div class="orders">
-                                        <span>${getRandomInt(300, 1000)}</span><br>orders
-                                    </div>
-                                </div>
-                                <div class="description">
-                                    <p>Color: <span>${items[cardID].color_0}</span></p>
-                                    <p>Operating System: <span>${items[cardID].os}</span></p>
-                                    <p>Chip: <span>${items[cardID].chip_name}</span></p>
-                                    <p>Height: <span>${items[cardID].size_height}</span></p>
-                                    <p>Width: <span>${items[cardID].size_width}</span></p>
-                                    <p>Depth: <span>${items[cardID].size_depth}</span></p>
-                                    <p>Weight: <span>${items[cardID].size_weight}</span></p>
-                                </div>
-                            </div>
-                            <div class="modal-price">
-                                <span>$ ${items[cardID].price}</span>
-                                <div class="stock">
-                                  <br>
-                                Stock: <b>${items[cardID].orderInfo_inStock}</b>pcs.  
-                                </div>
-                                
-                                <button class='add-to-cart${btnEnabled} ${items[cardID].id}'${btnEnabled}>Add to cart</button>
-
-                            </div>
-                       
-        `;
-    document.getElementById("modal").style.display = "flex";
-    document.getElementById("modal").appendChild(div)
+    renderCard(target);
 
 }
 document.getElementById("modal").onclick = function (event) {
@@ -407,7 +372,7 @@ function updateFilter() {
     let colorFilter = [...document.querySelectorAll('#filter-attribute-colour input:checked')].map(n => n.id.split("-")[2])
     let displayFilter = [...document.querySelectorAll('#filter-attribute-display input:checked')].map(n => convertDisplay(n.id))
     build(items.filter((n => (
-        (priceFilter[1] == 0 && priceFilter[0]<=n.price ||  (n.price >= priceFilter[0] && n.price <= priceFilter[1])) &&
+        (priceFilter[1] == 0 && priceFilter[0] <= n.price || (n.price >= priceFilter[0] && n.price <= priceFilter[1])) &&
         (!colorFilter.length || checkColour(n, colorFilter)) &&
         (!storageFilter.length || (n.storage != null && storageFilter.includes(n.storage.toString()))) &&
         (!osFilter.length || osFilter.includes(n.os)) &&
@@ -420,9 +385,9 @@ for (let i = 0; i < filtersCB.length; i++) {
     filtersCB[i].onchange = updateFilter
 }
 document.getElementById("price-attribute-min").onblur = function () {
-    let min=Number(document.getElementById("price-attribute-min").value);
-    let max=Number(document.getElementById("price-attribute-max").value);
-    if (max==0) {
+    let min = Number(document.getElementById("price-attribute-min").value);
+    let max = Number(document.getElementById("price-attribute-max").value);
+    if (max == 0) {
         updateFilter()
         return
     }
@@ -432,9 +397,9 @@ document.getElementById("price-attribute-min").onblur = function () {
     updateFilter()
 }
 document.getElementById("price-attribute-max").onblur = function () {
-    let min=Number(document.getElementById("price-attribute-min").value);
-    let max=Number(document.getElementById("price-attribute-max").value);
-    if (max==0) {
+    let min = Number(document.getElementById("price-attribute-min").value);
+    let max = Number(document.getElementById("price-attribute-max").value);
+    if (max == 0) {
         updateFilter()
         return
     }
@@ -527,17 +492,17 @@ function buildCart(storage) {
     </div>
     <div class="item-info">
     ${el.name} <br>
-        <span>$${el.price}</span>
+        <span style="text-align: center;">$${el.price}</span>
     </div>
     <div class="counter">
         <button class="counter-del"${buttonMinus}>
-            &lt;
+        <i class="fa fa-minus" aria-hidden="true"></i>
         </button>
         <span class="count">
             ${storage[key]}
         </span>
         <button class="counter-add"${buttonPlus}>
-            &gt;
+        <i class="fa fa-plus" aria-hidden="true"></i>
         </button>
     </div>
     <div class="remove-item">
@@ -581,13 +546,13 @@ document.getElementById("container-rows").onclick = function (event) {
         localStorage.removeItem(target.id);
         buildCart(localStorage)
     }
-    if (target.className == "counter-del") {
+    if (target.className == "counter-del" || target.className == "fa fa-minus") {
         do {
             target = target.parentNode
         } while (target.className != "row-item");
         changeCount(target.id, "-")
     }
-    if (target.className == "counter-add") {
+    if (target.className == "counter-add" || target.className == "fa fa-plus") {
         do {
             target = target.parentNode
         } while (target.className != "row-item");
@@ -647,4 +612,59 @@ function changeCount(id, change) {
 
 }
 
+function renderCard(target) {
+    let cardID = target.className.split(" ")[1] - 1;
+    let enabled = items[cardID].orderInfo_inStock
+    if (enabled > 0) {
+        enabled = "fa-circle-check"
+        btnEnabled = ""
+    } else {
+        enabled = "fa-circle-xmark"
+        btnEnabled = " disabled"
+    }
+    var div = document.createElement("div");
+    div.className = "modal-content"
+    div.innerHTML = `
+      
+                            <span class="modal-close">&times;</span>
+                            <div class="modal-photo">
+                                <img src="img/${items[cardID].imgUrl}" alt="">
+                            </div>
+                            <div class="modal-description">
+                                <h1>${items[cardID].name}</h1>
+                                <div class="product-stats">
+                                    <div class="stats-left">
+                                        <i class="fa-solid fa-heart"></i>
+                                        <div class="reviews">
+                                            <span>${items[cardID].orderInfo_reviews}%</span> Positive reviews <br> Above avarage
+                                        </div>
+                                    </div>
+                                    <div class="orders">
+                                        <span>${getRandomInt(300, 1000)}</span><br>orders
+                                    </div>
+                                </div>
+                                <div class="description">
+                                    <p>Color: <span>${items[cardID].color_0}</span></p>
+                                    <p>Operating System: <span>${items[cardID].os}</span></p>
+                                    <p>Chip: <span>${items[cardID].chip_name}</span></p>
+                                    <p>Height: <span>${items[cardID].size_height}</span></p>
+                                    <p>Width: <span>${items[cardID].size_width}</span></p>
+                                    <p>Depth: <span>${items[cardID].size_depth}</span></p>
+                                    <p>Weight: <span>${items[cardID].size_weight}</span></p>
+                                </div>
+                            </div>
+                            <div class="modal-price">
+                                <span>$ ${items[cardID].price}</span>
+                                <div class="stock">
+                                  <br>
+                                Stock: <b>${items[cardID].orderInfo_inStock}</b>pcs.  
+                                </div>
+                                
+                                <button class='add-to-cart${btnEnabled} ${items[cardID].id}'${btnEnabled}>Add to cart</button>
 
+                            </div>
+                       
+        `;
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modal").appendChild(div)
+}

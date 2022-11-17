@@ -12,14 +12,14 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 
 router.get('/', function(req, res) {
-    Product.find({}, function(err, products) {
+    Product.find({}).sort({'id':1}).exec( function(err, products) {
         res.json(products).status(200);
     })
 });
 
 router.get('/:search', function(req, res) {
     tofind=req.params.search.toLowerCase();
-    Product.find({}, function(err, products) {
+    Product.find({}).sort({'id':1}).exec(function(err, products) {
         res.json(products.filter(n=>n.name.toLowerCase().indexOf(tofind)!=-1)).status(200);
     })
 })
