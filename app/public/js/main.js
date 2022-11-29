@@ -17,7 +17,6 @@ if (response.ok) {
 }
 let cookiesparsed = document.cookie.split("; ");
 for (let i = 0; i < cookiesparsed.length; i++) {
-    console.log(cookiesparsed[i]);
     let cookie = cookiesparsed[i].split("=");
     if (cookie[0] == "userName") {
         document.getElementById('welcome').innerHTML = `Welcome, ${decodeURI(cookie[1])}`;
@@ -613,8 +612,14 @@ function changeCount(id, change) {
 }
 
 function renderCard(target) {
-    let cardID = target.className.split(" ")[1] - 1;
-    let enabled = items[cardID].orderInfo_inStock
+    let cardID = target.className.split(" ")[1];
+    let founded;
+    items.forEach(e => {
+        if (e.id==cardID) {
+            founded=e;
+        }
+    });
+    let enabled = founded.orderInfo_inStock
     if (enabled > 0) {
         enabled = "fa-circle-check"
         btnEnabled = ""
@@ -628,16 +633,16 @@ function renderCard(target) {
       
                             <span class="modal-close">&times;</span>
                             <div class="modal-photo">
-                                <img src="img/${items[cardID].imgUrl}" alt="">
+                                <img src="img/${founded.imgUrl}" alt="">
                             </div>
                             <div class="modal-span">
                             <div class="modal-description">
-                            <h1>${items[cardID].name}</h1>
+                            <h1>${founded.name}</h1>
                             <div class="product-stats">
                                 <div class="stats-left">
                                     <i class="fa-solid fa-heart"></i>
                                     <div class="reviews">
-                                        <span>${items[cardID].orderInfo_reviews}%</span> Positive reviews <br> Above avarage
+                                        <span>${founded.orderInfo_reviews}%</span> Positive reviews <br> Above avarage
                                     </div>
                                 </div>
                                 <div class="orders">
@@ -645,23 +650,23 @@ function renderCard(target) {
                                 </div>
                             </div>
                             <div class="description">
-                                <p>Color: <span>${items[cardID].color_0}</span></p>
-                                <p>Operating System: <span>${items[cardID].os}</span></p>
-                                <p>Chip: <span>${items[cardID].chip_name}</span></p>
-                                <p>Height: <span>${items[cardID].size_height}</span></p>
-                                <p>Width: <span>${items[cardID].size_width}</span></p>
-                                <p>Depth: <span>${items[cardID].size_depth}</span></p>
-                                <p>Weight: <span>${items[cardID].size_weight}</span></p>
+                                <p>Color: <span>${founded.color_0}</span></p>
+                                <p>Operating System: <span>${founded.os}</span></p>
+                                <p>Chip: <span>${founded.chip_name}</span></p>
+                                <p>Height: <span>${founded.size_height}</span></p>
+                                <p>Width: <span>${founded.size_width}</span></p>
+                                <p>Depth: <span>${founded.size_depth}</span></p>
+                                <p>Weight: <span>${founded.size_weight}</span></p>
                             </div>
                         </div>
                         <div class="modal-price">
-                            <span>$ ${items[cardID].price}</span>
+                            <span>$ ${founded.price}</span>
                             <div class="stock">
                               <br>
-                            Stock: <b>${items[cardID].orderInfo_inStock}</b>pcs.  
+                            Stock: <b>${founded.orderInfo_inStock}</b>pcs.  
                             </div>
                             
-                            <button class='add-to-cart${btnEnabled} ${items[cardID].id}'${btnEnabled}>Add to cart</button>
+                            <button class='add-to-cart${btnEnabled} ${founded.id}'${btnEnabled}>Add to cart</button>
 
                         </div>
                             </div>

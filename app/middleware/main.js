@@ -11,7 +11,6 @@ function checkToken (req, res, next) {
         jwt.verify(token, key.secret);
         next()
     } catch (err) {
-        console.log(err);
         res.redirect('/auth/login');
     }
 }
